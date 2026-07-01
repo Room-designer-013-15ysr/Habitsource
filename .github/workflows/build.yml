@@ -25,9 +25,10 @@ jobs:
           # Copy your core application file into place
           cp "${{ steps.locate.outputs.html_path }}" Payload/HabitTracker.app/index.html
           
-          # Inject a completely clean, raw universal binary stub from scratch
-          # This creates a flawless 64-bit Mach-O magic header block with zero pre-existing Apple signatures
-          printf "\xcf\xfa\xed\xfe\x0c\x00\x00\x01\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00" > Payload/HabitTracker.app/HabitTracker
+          # Compile a valid, un-signed native Mach-O framework template structure.
+          # This creates a zero-signature binary containing the exact __LINKEDIT segments the sideloader wants.
+          echo 'void stub() {}' > stub.c
+          clang -dynamiclib -shared -o Payload/HabitTracker.app/HabitTracker stub.c -target arm64-apple-ios9.0
           chmod +x Payload/HabitTracker.app/HabitTracker
           
           # Generate a unified layout structure matching our binary stub target
