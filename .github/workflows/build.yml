@@ -23,15 +23,33 @@ jobs:
           cordova platform add ios
           rm -rf www/*
           
-          # Smart check: look for a www folder first, then look for a root index.html
+          # Smart check: detect file or folder layout
           if [ -d "../www" ]; then
             cp -R ../www/* www/
           elif [ -f "../index.html" ]; then
             cp ../index.html www/index.html
           else
-            echo "Error: Could not find your index.html file in the repository!"
-            exit 1
+            # If everything else fails, search for any html file in the root
+            ROOT_HTML=$(find .. -maxdepth 1 -name "*.html" | head -n 1)
+            if [ ! -z "$ROOT_HTML" ]; then
+              cp "$ROOT_HTML" www/index.html
+            else
+              echo "Error: Could not find any HTML files to build!"
+              exit 1
+            fi
           fi
+          
+          # Inject a fallback config.xml to satisfy the iOS build requirements
+          cat <<EOF > config.xml
+          <?xml version='1.0' encoding='utf-8'?>
+          <widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+              <name>HabitTracker</name>
+              <description>A standalone habit tracker application.</description>
+              <author email="dev@custom.com" href="http://custom.com">Developer</author>
+              <content src="index.html" />
+              <preference name="AllowInlineMediaPlayback" value="false" />
+          </widget>
+          EOF
           
           cordova build ios --emulator
 
