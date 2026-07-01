@@ -20,7 +20,9 @@ jobs:
         run: |
           cordova create habit-build com.custom.habittracker HabitTracker
           cd habit-build
-          cordova platform add ios
+          
+          # Force an older Cordova iOS platform version that supports older iOS targets
+          cordova platform add ios@6.3.0
           rm -rf www/*
           
           # Smart check: detect file or folder layout
@@ -38,8 +40,8 @@ jobs:
             fi
           fi
           
-          # Adding deployment-target preference to allow compatibility down to iOS 9.0
-          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="deployment-target" value="9.0" /><preference name="AllowInlineMediaPlayback" value="true" /></widget>' > config.xml
+          # Write configuration targeting a lower deployment version allowed by platform v6
+          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="deployment-target" value="11.0" /><preference name="AllowInlineMediaPlayback" value="true" /></widget>' > config.xml
           
           cordova build ios --emulator
 
