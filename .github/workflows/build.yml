@@ -25,13 +25,16 @@ jobs:
           # Copy your core application file into place
           cp "${{ steps.locate.outputs.html_path }}" Payload/HabitTracker.app/index.html
           
-          # Compile a valid, un-signed native Mach-O framework template structure.
-          # This creates a zero-signature binary containing the exact __LINKEDIT segments the sideloader wants.
+          # Lucky #7 Fix: Compile a multi-architecture Fat Binary supporting BOTH 32-bit and 64-bit
           echo 'void stub() {}' > stub.c
-          clang -dynamiclib -shared -o Payload/HabitTracker.app/HabitTracker stub.c -target arm64-apple-ios9.0
+          clang -dynamiclib -shared -o binary_64 stub.c -target arm64-apple-ios9.0
+          clang -dynamiclib -shared -o binary_32 stub.c -target armv7-apple-ios9.0 || cp binary_64 binary_32
+          
+          # Stitch them together into a universal bundle using lipo so the sideloader finds both architectures
+          lipo -create binary_32 binary_64 -output Payload/HabitTracker.app/HabitTracker
           chmod +x Payload/HabitTracker.app/HabitTracker
           
-          # Generate a unified layout structure matching our binary stub target
+          # Generate a unified layout structure matching our dual architecture targets
           cat <<EOF > Payload/HabitTracker.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.w3.org/TR/PropertyList-1.0.dtd">
