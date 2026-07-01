@@ -21,7 +21,7 @@ jobs:
           cordova create habit-build com.custom.habittracker HabitTracker
           cd habit-build
           
-          # Force an older Cordova iOS platform version that supports older iOS targets
+          # Use the legacy-compatible platform version
           cordova platform add ios@6.3.0
           rm -rf www/*
           
@@ -40,7 +40,7 @@ jobs:
             fi
           fi
           
-          # Write configuration targeting a lower deployment version allowed by platform v6
+          # Configuration targeting a highly compatible target layer
           echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="deployment-target" value="11.0" /><preference name="AllowInlineMediaPlayback" value="true" /></widget>' > config.xml
           
           cordova build ios --emulator
@@ -48,7 +48,13 @@ jobs:
       - name: Package IPA Archive
         run: |
           mkdir -p Payload
-          cp -R habit-build/platforms/ios/build/Debug-iphonesimulator/*.app Payload/
+          # Deep search for any compiled .app folder anywhere inside the build tree
+          APP_PATH=$(find habit-build/platforms/ios/build -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: Could not find the compiled .app file anywhere!"
+            exit 1
+          fi
+          cp -R "$APP_PATH" Payload/
           zip -r HabitTracker.ipa Payload
 
       - name: Upload Finished IPA
