@@ -8,56 +8,60 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install Cordova
-        run: npm install -g cordova
-
-      - name: Create Cordova Project
+      - name: Locate HTML File
+        id: locate
         run: |
-          cordova create habit-build com.custom.habittracker HabitTracker
-          cd habit-build
-          
-          # Use the legacy-compatible platform version
-          cordova platform add ios@6.3.0
-          rm -rf www/*
-          
-          # Smart check: detect file or folder layout
-          if [ -d "../www" ]; then
-            cp -R ../www/* www/
-          elif [ -f "../index.html" ]; then
-            cp ../index.html www/index.html
-          else
-            ROOT_HTML=$(find .. -maxdepth 1 -name "*.html" | head -n 1)
-            if [ ! -z "$ROOT_HTML" ]; then
-              cp "$ROOT_HTML" www/index.html
-            else
-              echo "Error: Could not find any HTML files to build!"
-              exit 1
-            fi
-          fi
-          
-          # Configuration targeting a highly compatible target layer
-          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="deployment-target" value="11.0" /><preference name="AllowInlineMediaPlayback" value="true" /></widget>' > config.xml
-          
-          cordova build ios --emulator
-
-      - name: Package IPA Archive
-        run: |
-          mkdir -p Payload
-          # Deep search for any compiled .app folder anywhere inside the build tree
-          APP_PATH=$(find habit-build/platforms/ios/build -name "*.app" | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "Error: Could not find the compiled .app file anywhere!"
+          ROOT_HTML=$(find . -maxdepth 2 -name "*.html" | head -n 1)
+          if [ -z "$ROOT_HTML" ]; then
+            echo "Error: Could not find any HTML files in the repository!"
             exit 1
           fi
-          cp -R "$APP_PATH" Payload/
+          echo "html_path=$ROOT_HTML" >> $GITHUB_OUTPUT
+
+      - name: Assemble Manual Payload
+        run: |
+          # 1. Create the official iOS App bundle directory structure
+          mkdir -p Payload/HabitTracker.app
+          
+          # 2. Copy your tracker into the core bundle execution slot
+          cp "${{ steps.locate.outputs.html_path }}" Payload/HabitTracker.app/index.html
+          
+          # 3. Create a raw, universal Info.plist that bypasses compiler restriction checks
+          cat <<EOF > Payload/HabitTracker.app/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.w3.org/TR/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleDevelopmentRegion</key>
+              <string>en</string>
+              <key>CFBundleExecutable</key>
+              <string>index.html</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.custom.habittracker</string>
+              <key>CFBundleInfoDictionaryVersion</key>
+              <string>6.0</string>
+              <key>CFBundleName</key>
+              <string>HabitTracker</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0</string>
+              <key>CFBundleSignature</key>
+              <string>????</string>
+              <key>CFBundleVersion</key>
+              <string>1</string>
+              <key>LSRequiresIPhoneOS</key>
+              <true/>
+              <key>MinimumOSVersion</key>
+              <string>9.0</string>
+          </dict>
+          </plist>
+          EOF
+          
+          # 4. Directly zip the raw Payload architecture into a standard .ipa package
           zip -r HabitTracker.ipa Payload
 
-      - name: Upload Finished IPA
+      - name: Upload Native IPA
         uses: actions/upload-artifact@v4
         with:
           name: Standalone-HabitTracker-IPA
