@@ -38,24 +38,14 @@ jobs:
             fi
           fi
           
-          # Inject a fallback config.xml to satisfy the iOS build requirements
-          cat <<EOF > config.xml
-          <?xml version='1.0' encoding='utf-8'?>
-          <widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-              <name>HabitTracker</name>
-              <description>A standalone habit tracker application.</description>
-              <author email="dev@custom.com" href="http://custom.com">Developer</author>
-              <content src="index.html" />
-              <preference name="AllowInlineMediaPlayback" value="false" />
-          </widget>
-          EOF
+          # Writing config.xml cleanly on one line to avoid any indentation or syntax errors
+          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="AllowInlineMediaPlayback" value="false" /></widget>' > config.xml
           
           cordova build ios --emulator
 
       - name: Package IPA Archive
         run: |
           mkdir -p Payload
-          # Pointing directly to Debug-iphonesimulator as shown in log line 1503
           cp -R habit-build/platforms/ios/build/Debug-iphonesimulator/*.app Payload/
           zip -r HabitTracker.ipa Payload
 
