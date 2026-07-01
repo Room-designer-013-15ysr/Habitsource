@@ -29,7 +29,6 @@ jobs:
           elif [ -f "../index.html" ]; then
             cp ../index.html www/index.html
           else
-            # If everything else fails, search for any html file in the root
             ROOT_HTML=$(find .. -maxdepth 1 -name "*.html" | head -n 1)
             if [ ! -z "$ROOT_HTML" ]; then
               cp "$ROOT_HTML" www/index.html
@@ -56,7 +55,8 @@ jobs:
       - name: Package IPA Archive
         run: |
           mkdir -p Payload
-          cp -R habit-build/platforms/ios/build/emulator/*.app Payload/
+          # Pointing directly to Debug-iphonesimulator as shown in log line 1503
+          cp -R habit-build/platforms/ios/build/Debug-iphonesimulator/*.app Payload/
           zip -r HabitTracker.ipa Payload
 
       - name: Upload Finished IPA
