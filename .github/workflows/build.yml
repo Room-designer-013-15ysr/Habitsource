@@ -1,4 +1,4 @@
-name: Build Free iOS IPA
+name: Build Free iOS App
 on: [push, workflow_dispatch]
 
 jobs:
@@ -18,23 +18,66 @@ jobs:
           fi
           echo "html_path=$ROOT_HTML" >> $GITHUB_OUTPUT
 
-      - name: Build Standalone Web-App Bundle
+      - name: Build Web Clip Profile and App Payload
         run: |
           mkdir -p Payload/HabitTracker.app
           
           # Copy your core application file into place
           cp "${{ steps.locate.outputs.html_path }}" Payload/HabitTracker.app/index.html
           
-          # Lucky #7 Fix: Compile a multi-architecture Fat Binary supporting BOTH 32-bit and 64-bit
+          # Generate a universal mock tracking stub that satisfies standard 64-bit loaders safely
           echo 'void stub() {}' > stub.c
-          clang -dynamiclib -shared -o binary_64 stub.c -target arm64-apple-ios9.0
-          clang -dynamiclib -shared -o binary_32 stub.c -target armv7-apple-ios9.0 || cp binary_64 binary_32
-          
-          # Stitch them together into a universal bundle using lipo so the sideloader finds both architectures
-          lipo -create binary_32 binary_64 -output Payload/HabitTracker.app/HabitTracker
+          clang -dynamiclib -shared -o Payload/HabitTracker.app/HabitTracker stub.c -target arm64-apple-ios9.0
           chmod +x Payload/HabitTracker.app/HabitTracker
           
-          # Generate a unified layout structure matching our dual architecture targets
+          # Create a generic configuration profile mapping for seamless deployment
+          cat <<EOF > HabitTracker.mobileconfig
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.w3.org/TR/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>PayloadContent</key>
+              <array>
+                  <dict>
+                      <key>FullScreen</key>
+                      <true/>
+                      <key>IsRemovable</key>
+                      <true/>
+                      <key>Label</key>
+                      <string>Habit Tracker</string>
+                      <key>PayloadDescription</key>
+                      <string>Launches the Habit Tracker standalone web application</string>
+                      <key>PayloadDisplayName</key>
+                      <string>Habit Tracker</string>
+                      <key>PayloadIdentifier</key>
+                      <string>com.custom.habittracker.webclip</string>
+                      <key>PayloadType</key>
+                      <string>com.apple.webclip.managed</string>
+                      <key>PayloadUUID</key>
+                      <string>A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6D</string>
+                      <key>PayloadVersion</key>
+                      <integer>1</integer>
+                      <key>URL</key>
+                      <string>file:///var/mobile/Containers/Data/Application/HabitTracker/index.html</string>
+                  </dict>
+              </array>
+              <key>PayloadDisplayName</key>
+              <string>Habit Tracker Web App</string>
+              <key>PayloadIdentifier</key>
+              <string>com.custom.habittracker.profile</string>
+              <key>PayloadRemovalDisallowed</key>
+              <false/>
+              <key>PayloadType</key>
+              <string>Configuration</string>
+              <key>PayloadUUID</key>
+              <string>E5F67A8B-9C0D-1E2F-3A4B-5C6D7E8F9A0B</string>
+              <key>PayloadVersion</key>
+              <integer>1</integer>
+          </dict>
+          </plist>
+          EOF
+
+          # Generate the Info.plist properties
           cat <<EOF > Payload/HabitTracker.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.w3.org/TR/PropertyList-1.0.dtd">
@@ -54,8 +97,6 @@ jobs:
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
               <string>1.0</string>
-              <key>CFBundleSignature</key>
-              <string>????</string>
               <key>CFBundleVersion</key>
               <string>1</string>
               <key>LSRequiresIPhoneOS</key>
@@ -71,11 +112,12 @@ jobs:
           </plist>
           EOF
           
-          # Zip into the final cross-platform .ipa package
           zip -r HabitTracker.ipa Payload
 
-      - name: Upload Native IPA
+      - name: Upload Application Package Assets
         uses: actions/upload-artifact@v4
         with:
-          name: Standalone-HabitTracker-IPA
-          path: HabitTracker.ipa
+          name: Habit-Tracker-Distribution
+          path: |
+            HabitTracker.ipa
+            HabitTracker.mobileconfig
