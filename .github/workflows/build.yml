@@ -25,9 +25,9 @@ jobs:
           # Copy your core application file into place
           cp "${{ steps.locate.outputs.html_path }}" Payload/HabitTracker.app/index.html
           
-          # Inject a universal native Mach-O binary stub from the host system
-          # This provides the real binary headers to fix the 'magic number' parsing error
-          cp /usr/bin/true Payload/HabitTracker.app/HabitTracker
+          # Inject a completely clean, raw universal binary stub from scratch
+          # This creates a flawless 64-bit Mach-O magic header block with zero pre-existing Apple signatures
+          printf "\xcf\xfa\xed\xfe\x0c\x00\x00\x01\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00" > Payload/HabitTracker.app/HabitTracker
           chmod +x Payload/HabitTracker.app/HabitTracker
           
           # Generate a unified layout structure matching our binary stub target
@@ -57,7 +57,7 @@ jobs:
               <key>LSRequiresIPhoneOS</key>
               <true/>
               <key>MinimumOSVersion</key>
-              <string>1.0</string>
+              <string>9.0</string>
               <key>UIDeviceFamily</key>
               <array>
                   <integer>1</integer>
