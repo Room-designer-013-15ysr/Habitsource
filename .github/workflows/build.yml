@@ -1,0 +1,38 @@
+name: Build Free iOS IPA
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Cordova Project
+        run: |
+          cordova create habit-build com.custom.habittracker HabitTracker
+          cd habit-build
+          cordova platform add ios
+          rm -rf www/*
+          cp -R ../www/* www/
+          cordova build ios --emulator
+
+      - name: Package IPA Archive
+        run: |
+          mkdir -p Payload
+          cp -R habit-build/platforms/ios/build/emulator/HabitTracker.app Payload/
+          zip -r HabitTracker.ipa Payload
+
+      - name: Upload Finished IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: Standalone-HabitTracker-IPA
+          path: HabitTracker.ipa
