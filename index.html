@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>The Commonplace Book</title>
+<style>
+
+/* ---------------------------------------------------------
+   No CSS custom properties (--vars) are used anywhere below,
+   because iOS 9 / old WebKit does not support them.
+   No CSS Grid. Flexbox is written with -webkit- prefixes for
+   the old WebKit engine on iPad 2 / iOS 9.3.6.
+--------------------------------------------------------- */
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #241c17;
+  color: #ece0c8;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-image:
+    -webkit-radial-gradient(circle at top, #362a20 0%, #241c17 70%);
+  background-image:
+    radial-gradient(circle at top, #362a20 0%, #241c17 70%);
+  padding: 18px 14px 60px 14px;
+}
+
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+header {
+  text-align: center;
+  border-bottom: 1px solid #6b573f;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+header h1 {
+  font-size: 26px;
+  letter-spacing: 1px;
+  margin: 0 0 2px 0;
+  color: #e8c987;
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+header .subtitle {
+  font-size: 12px;
+  color: #a3927a;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+#todayLabel {
+  font-size: 13px;
+  color: #cbb98d;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- File controls ---------- */
+
+.filebar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #382c22;
+  border: 1px solid #6b573f;
+  color: #e8c987;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  padding: 9px 14px;
+  margin: 4px 5px;
+  border-radius: 3px;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.btn:active {
+  background-color: #4a3a2a;
+}
+
+.btn.gold {
+  background-color: #4a3a22;
+  border-color: #e8c987;
+}
+
+.btn.small {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+.filenote {
+  text-align: center;
+  font-size: 11px;
+  color: #7d6c53;
+  margin-top: 8px;
+  line-height: 1.5;
+  padding: 0 8px;
+}
+
+#fileInput { display: none; }
+
+/* ---------- Sections ---------- */
+
+.card {
+  background-color: #2c2219;
+  border: 1px solid #4a3c2c;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  -webkit-box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+
+.card-header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  border-bottom: 1px solid #4a3c2c;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.card h2 {
+  font-size: 15px;
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  color: #cbb98d;
+  margin: 0;
+}
+
+.icon-btn {
+  color: #a3927a;
+  border: 1px solid #4a3c2c;
+  border-radius: 3px;
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  line-height: 22px;
+  text-align: center;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.icon-btn:active {
+  background-color: #3a2f22;
+}
+
+/* ---------- Inline Form Fields ---------- */
+
+.inline-input {
+  background-color: #1e1712;
+  border: 1px solid #6b573f;
+  color: #ece0c8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 3px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  margin-right: 6px;
+  -webkit-appearance: none;
+}
+
+.inline-form-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+/* ---------- Habit list ---------- */
+
+ul.habits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.habits li {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  padding: 10px 2px;
+  border-bottom: 1px solid #3a2f22;
+}
+
+ul.habits li:last-child {
+  border-bottom: none;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 1px solid #a3927a;
+  border-radius: 2px;
+  margin-right: 12px;
+  position: relative;
+  background-color: #1e1712;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.checkbox.checked {
+  background-color: #e8c987;
+  border-color: #e8c987;
+}
+
+.checkbox.checked:after {
+  content: "\2713";
+  position: absolute;
+  top: -3px;
+  left: 4px;
+  color: #241c17;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.habit-label {
+  font-size: 16px;
+  color: #ece0c8;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+
+.habit-label.done {
+  color: #7d6c53;
+  text-decoration: line-through;
+}
+
+.habit-del {
+  color: #7d6c53;
+  font-size: 18px;
+  padding: 2px 8px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.habit-del:active {
+  color: #c98f7a;
+}
+
+.add-habit-row {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.empty-note {
+  font-size: 12px;
+  color: #7d6c53;
+  font-style: italic;
+  padding: 6px 2px;
+}
+
+/* ---------- Water tracker ---------- */
+
+.water-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+  padding: 6px 0 2px 0;
+}
+
+.bottle {
+  font-size: 34px;
+  opacity: 0.28;
+  -webkit-transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease;
+}
+
+.bottle.filled {
+  opacity: 1;
+}
+
+.water-count {
+  text-align: center;
+  font-size: 12px;
+  color: #a3927a;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Add routine ---------- */
+
+.add-routine-bar {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ---------- JSON fallback box ---------- */
+
+#jsonBox {
+  display: none;
+}
+
+#jsonBox textarea {
+  width: 100%;
+  height: 160px;
+  background-color: #1e1712;
+  color: #ece0c8;
+  border: 1px solid #4a3c2c;
+  font-family: Menlo, Courier, monospace;
+  font-size: 11px;
+  padding: 8px;
+  -webkit-appearance: none;
+}
+
+#jsonBox .hint {
+  font-size: 11px;
+  color: #7d6c53;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+#statusMsg {
+  text-align: center;
+  font-size: 12px;
+  color: #9fbf8f;
+  min-height: 16px;
+  margin-top: 8px;
+}
+
+footer {
+  text-align: center;
+  font-size: 11px;
+  color: #5f5040;
+  margin-top: 26px;
+  font-style: italic;
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <h1>The Commonplace Book</h1>
+    <div class="subtitle">a quiet record of daily rites</div>
+    <div id="todayLabel"></div>
+
+    <div class="filebar">
+      <div class="btn gold" id="btnLoad">Load habits.json</div>
+      <div class="btn" id="btnSave">Save habits.json</div>
+    </div>
+    <div class="filebar">
+      <div class="btn small" id="btnJson">Show / Copy Raw JSON</div>
+    </div>
+    <div class="filenote">
+      Tap "Load" to import habits.json from the Files / Google Drive picker.
+      Tap "Save" to export it back out. On older iPads (iOS 9), if the
+      one-tap file save isn't available, use "Show / Copy Raw JSON" and
+      paste the text into a .json file in Google Drive by hand.
+    </div>
+    <div id="statusMsg"></div>
+  </header>
+
+  <div class="card" id="jsonBox">
+    <h2>Raw Data</h2>
+    <textarea id="jsonText" readonly onclick="this.select();"></textarea>
+    <div class="hint">Tap the box, then use the native "Select All" and "Copy" from the magnifier menu. To import instead, paste new JSON here, then tap "Apply Pasted JSON" below.</div>
+    <div class="filebar" style="margin-top:10px;">
+      <div class="btn small" id="btnApplyJson">Apply Pasted JSON</div>
+    </div>
+  </div>
+
+  <div id="routinesContainer"></div>
+
+  <div class="add-routine-bar">
+    <div class="btn gold" id="btnAddRoutine">+ Add Routine</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Water &mdash; Four Bottles</h2>
+    </div>
+    <div class="water-row" id="waterRow"></div>
+    <div class="water-count" id="waterCount"></div>
+  </div>
+
+  <input type="file" id="fileInput" accept=".json,application/json">
+
+  <footer>habits.json &middot; kept locally and by hand</footer>
+
+</div>
+
+<script>
+(function () {
+
+  "use strict";
+
+  /* ---------------------------------------------------------
+      Vanilla ES5 only. No let/const, no arrow functions, no
+      template literals, no fetch, no Promise chaining that
+      relies on modern engine features. Written to run on the
+      WebKit engine shipped with iOS 9.3.6 as well as any
+      current mobile Safari / Chrome.
+
+      Data shape (habits.json):
+      {
+        "routines": [
+          { "id": "r_xxx", "name": "Morning Rites",
+            "habits": [ { "id": "h_xxx", "label": "Brush Teeth" }, ... ] }
+        ],
+        "days": {
+          "2026-07-01": { "entries": { "h_xxx": true }, "water": 2 }
+        }
+      }
+  --------------------------------------------------------- */
+
+  var STORAGE_KEY = "commonplaceHabitsData";
+
+  var todayKey = getTodayKey();
+  var store = null;     // { routines: [...], days: { ... } }
+  var dayData = null;   // shortcut to store.days[todayKey]
+
+  var idCounter = 0;
+
+  // Track dynamic editing elements to manage focus nicely
+  var activeRoutineInputId = null;
+  var activeHabitInputId = null;
+
+  function makeId(prefix) {
+    idCounter += 1;
+    return prefix + "_" + Date.now() + "_" + idCounter;
+  }
+
+  function getTodayKey() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = d.getMonth() + 1;
+    var day = d.getDate();
+    if (m < 10) { m = "0" + m; }
+    if (day < 10) { day = "0" + day; }
+    return y + "-" + m + "-" + day;
+  }
+
+  function getTodayLabel() {
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var d = new Date();
+    return days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+  }
+
+  function defaultRoutines() {
+    return [
+      {
+        id: makeId("r"),
+        name: "Morning Rites",
+        habits: [
+          { id: makeId("h"), label: "Morning Caffeinated Tea" },
+          { id: makeId("h"), label: "Brush Teeth" },
+          { id: makeId("h"), label: "Shave" },
+          { id: makeId("h"), label: "Shower" },
+          { id: makeId("h"), label: "Get Dressed" },
+          { id: makeId("h"), label: "Facial Care" }
+        ]
+      },
+      {
+        id: makeId("r"),
+        name: "Evening Rites",
+        habits: [
+          { id: makeId("h"), label: "Read Before Bed" }
+        ]
+      }
+    ];
+  }
+
+  function defaultDay() {
+    return { entries: {}, water: 0 };
+  }
+
+  function allHabitIds() {
+    var ids = [];
+    var i, j, routine;
+    for (i = 0; i < store.routines.length; i++) {
+      routine = store.routines[i];
+      for (j = 0; j < routine.habits.length; j++) {
+        ids.push(routine.habits[j].id);
+      }
+    }
+    return ids;
+  }
+
+  function ensureToday() {
+    if (!store.days[todayKey]) {
+      store.days[todayKey] = defaultDay();
+    }
+    dayData = store.days[todayKey];
+    if (!dayData.entries) { dayData.entries = {}; }
+    if (typeof dayData.water !== "number") { dayData.water = 0; }
+
+    /* backfill any missing habit entries for today */
+    var ids = allHabitIds();
+    var i;
+    for (i = 0; i < ids.length; i++) {
+      if (typeof dayData.entries[ids[i]] === "undefined") {
+        dayData.entries[ids[i]] = false;
+      }
+    }
+  }
+
+  /* -------- migration from the old flat single-routine format -------- */
+
+  function looksLikeOldFormat(obj) {
+    if (!obj || typeof obj !== "object") { return false; }
+    if (obj.routines) { return false; }
+    /* old format was a map of date -> { habits: {...}, water: n } */
+    var key;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (obj[key] && typeof obj[key] === "object" && obj[key].habits) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function migrateOldFormat(oldStore) {
+    var labelMap = {
+      tea: "Morning Caffeinated Tea",
+      teeth: "Brush Teeth",
+      shave: "Shave",
+      shower: "Shower",
+      dressed: "Get Dressed",
+      facial: "Facial Care",
+      read: "Read Before Bed"
+    };
+    var idForOldKey = {};
+    var morningHabits = [];
+    var eveningHabits = [];
+    var oldKey;
+    for (oldKey in labelMap) {
+      if (labelMap.hasOwnProperty(oldKey)) {
+        var newId = makeId("h");
+        idForOldKey[oldKey] = newId;
+        if (oldKey === "read") {
+          eveningHabits.push({ id: newId, label: labelMap[oldKey] });
+        } else {
+          morningHabits.push({ id: newId, label: labelMap[oldKey] });
+        }
+      }
+    }
+
+    var newStore = {
+      routines: [
+        { id: makeId("r"), name: "Morning Rites", habits: morningHabits },
+        { id: makeId("r"), name: "Evening Rites", habits: eveningHabits }
+      ],
+      days: {}
+    };
+
+    var dateKey;
+    for (dateKey in oldStore) {
+      if (oldStore.hasOwnProperty(dateKey)) {
+        var oldDay = oldStore[dateKey];
+        var entries = {};
+        var k;
+        for (k in oldDay.habits) {
+          if (oldDay.habits.hasOwnProperty(k) && idForOldKey[k]) {
+            entries[idForOldKey[k]] = !!oldDay.habits[k];
+          }
+        }
+        newStore.days[dateKey] = {
+          entries: entries,
+          water: typeof oldDay.water === "number" ? oldDay.water : 0
+        };
+      }
+    }
+
+    return newStore;
+  }
+
+  /* -------- persistence -------- */
+
+  function loadFromLocalStorage() {
+    var raw = null;
+    try {
+      raw = window.localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      raw = null;
+    }
+    var parsed = null;
+    if (raw) {
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e2) {
+        parsed = null;
+      }
+    }
+
+    if (!parsed) {
+      store = { routines: defaultRoutines(), days: {} };
+    } else if (looksLikeOldFormat(parsed)) {
+      store = migrateOldFormat(parsed);
+    } else {
+      store = parsed;
+      if (!store.routines) { store.routines = defaultRoutines(); }
+      if (!store.days) { store.days = {}; }
+    }
+    ensureToday();
+  }
+
+  function persistLocalStorage() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    } catch (e) {
+      /* private browsing or storage disabled: silently ignore, data
+         still lives in memory and can be exported by hand */
+    }
+  }
+
+  function setStatus(msg, isGood) {
+    var el = document.getElementById("statusMsg");
+    el.style.color = isGood ? "#9fbf8f" : "#c98f7a";
+    el.textContent = msg;
+    window.setTimeout(function () {
+      if (el.textContent === msg) { el.textContent = ""; }
+    }, 4000);
+  }
+
+  /* ---------------- rendering ---------------- */
+
+  function renderRoutines() {
+    var container = document.getElementById("routinesContainer");
+    container.innerHTML = "";
+
+    var i;
+    for (i = 0; i < store.routines.length; i++) {
+      container.appendChild(buildRoutineCard(store.routines[i]));
+    }
+  }
+
+  function buildRoutineCard(routine) {
+    var card = document.createElement("div");
+    card.className = "card";
+
+    var headerRow = document.createElement("div");
+    headerRow.className = "card-header";
+
+    // Check if this routine is currently being named/created
+    if (routine.isNew) {
+      var formRow = document.createElement("div");
+      formRow.className = "inline-form-row";
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "inline-input";
+      input.placeholder = "Routine Name...";
+      input.value = routine.name;
+
+      var saveBtn = document.createElement("div");
+      saveBtn.className = "btn small gold";
+      saveBtn.textContent = "Save";
+
+      var cancelBtn = document.createElement("div");
+      cancelBtn.className = "btn small";
+      cancelBtn.textContent = "Cancel";
+
+      var commitRoutine = function () {
+        var name = trimStr(input.value);
+        if (name === "") { return; }
+        delete routine.isNew;
+        routine.name = name;
+        activeRoutineInputId = null;
+        persistLocalStorage();
+        renderAll();
+      };
+
+      var dropRoutine = function () {
+        var idx = store.routines.indexOf(routine);
+        if (idx > -1) {
+          store.routines.splice(idx, 1);
+        }
+        activeRoutineInputId = null;
+        renderAll();
+      };
+
+      saveBtn.addEventListener("click", commitRoutine, false);
+      cancelBtn.addEventListener("click", dropRoutine, false);
+      input.addEventListener("keydown", function (e) {
+        if (e.keyCode === 13) { commitRoutine(); }
+        if (e.keyCode === 27) { dropRoutine(); }
+      }, false);
+
+      formRow.appendChild(input);
+      formRow.appendChild(saveBtn);
+      formRow.appendChild(cancelBtn);
+      headerRow.appendChild(formRow);
+
+      // Autofocus target for iOS 9 / modern layouts safely
+      window.setTimeout(function () { input.focus(); }, 50);
+
+    } else {
+      var h2 = document.createElement("h2");
+      h2.textContent = routine.name;
+
+      var delRoutineBtn = document.createElement("div");
+      delRoutineBtn.className = "icon-btn";
+      delRoutineBtn.textContent = "\u2715";
+      delRoutineBtn.addEventListener("click", function () {
+        var ok = window.confirm("Delete the whole \"" + routine.name + "\" routine?");
+        if (!ok) { return; }
+        var idx = store.routines.indexOf(routine);
+        if (idx > -1) {
+          store.routines.splice(idx, 1);
+          persistLocalStorage();
+          renderAll();
+        }
+      }, false);
+
+      headerRow.appendChild(h2);
+      headerRow.appendChild(delRoutineBtn);
+    }
+
+    card.appendChild(headerRow);
+
+    var list = document.createElement("ul");
+    list.className = "habits";
+
+    if (routine.habits.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty-note";
+      empty.textContent = "No habits yet in this routine.";
+      card.appendChild(empty);
+    } else {
+      var j;
+      for (j = 0; j < routine.habits.length; j++) {
+        list.appendChild(buildHabitRow(routine, routine.habits[j]));
+      }
+      card.appendChild(list);
+    }
+
+    // Only show the "+ Add Habit" bar if we aren't editing the routine header
+    if (!routine.isNew) {
+      var addRow = document.createElement("div");
+      addRow.className = "add-habit-row";
+      var addBtn = document.createElement("div");
+      addBtn.className = "btn small";
+      addBtn.textContent = "+ Add Habit";
+      addBtn.addEventListener("click", function () {
+        // Prevent stacking multiple blank entries in the same routine
+        var k;
+        for (k = 0; k < routine.habits.length; k++) {
+          if (routine.habits[k].isNew) { return; }
+        }
+        
+        var newHabit = { id: makeId("h"), label: "", isNew: true };
+        routine.habits.push(newHabit);
+        renderAll();
+      }, false);
+      addRow.appendChild(addBtn);
+      card.appendChild(addRow);
+    }
+
+    return card;
+  }
+
+  function buildHabitRow(routine, habit) {
+    var li = document.createElement("li");
+
+    if (habit.isNew) {
+      var formRow = document.createElement("div");
+      formRow.className = "inline-form-row";
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "inline-input";
+      input.placeholder = "Habit text...";
+
+      var saveBtn = document.createElement("div");
+      saveBtn.className = "btn small gold";
+      saveBtn.textContent = "Save";
+
+      var cancelBtn = document.createElement("div");
+      cancelBtn.className = "btn small";
+      cancelBtn.textContent = "Cancel";
+
+      var commitHabit = function () {
+        var labelText = trimStr(input.value);
+        if (labelText === "") { return; }
+        delete habit.isNew;
+        habit.label = labelText;
+        dayData.entries[habit.id] = false;
+        persistLocalStorage();
+        renderAll();
+      };
+
+      var dropHabit = function () {
+        var idx = routine.habits.indexOf(habit);
+        if (idx > -1) {
+          routine.habits.splice(idx, 1);
+        }
+        renderAll();
+      };
+
+      saveBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        commitHabit();
+      }, false);
+
+      cancelBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        dropHabit();
+      }, false);
+
+      input.addEventListener("keydown", function (e) {
+        if (e.keyCode === 13) { commitHabit(); }
+        if (e.keyCode === 27) { dropHabit(); }
+      }, false);
+
+      formRow.appendChild(input);
+      formRow.appendChild(saveBtn);
+      formRow.appendChild(cancelBtn);
+      li.appendChild(formRow);
+
+      window.setTimeout(function () { input.focus(); }, 50);
+
+    } else {
+      var box = document.createElement("div");
+      box.className = "checkbox";
+      if (dayData.entries[habit.id]) {
+        box.className = "checkbox checked";
+      }
+
+      var label = document.createElement("div");
+      label.className = "habit-label";
+      if (dayData.entries[habit.id]) {
+        label.className = "habit-label done";
+      }
+      label.textContent = habit.label;
+
+      var del = document.createElement("div");
+      del.className = "habit-del";
+      del.textContent = "\u2715";
+      del.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        var idx = routine.habits.indexOf(habit);
+        if (idx > -1) {
+          routine.habits.splice(idx, 1);
+          persistLocalStorage();
+          renderAll();
+        }
+      }, false);
+
+      li.appendChild(box);
+      li.appendChild(label);
+      li.appendChild(del);
+
+      li.addEventListener("click", function () {
+        dayData.entries[habit.id] = !dayData.entries[habit.id];
+        persistLocalStorage();
+        renderAll();
+      }, false);
+    }
+
+    return li;
+  }
+
+  function trimStr(s) {
+    return s.replace(/^\s+|\s+$/g, "");
+  }
+
+  function renderWater() {
+    var row = document.getElementById("waterRow");
+    row.innerHTML = "";
+    var i;
+    for (i = 0; i < 4; i++) {
+      (function (index) {
+        var span = document.createElement("div");
+        span.className = "bottle";
+        if (index < dayData.water) {
+          span.className = "bottle filled";
+        }
+        span.textContent = "\uD83C\uDFFA"; /* amphora glyph, safe unicode literal */
+        span.addEventListener("click", function () {
+          if (dayData.water === index + 1) {
+            dayData.water = index;
+          } else {
+            dayData.water = index + 1;
+          }
+          persistLocalStorage();
+          renderAll();
+        }, false);
+        row.appendChild(span);
+      })(i);
+    }
+    var countEl = document.getElementById("waterCount");
+    countEl.textContent = dayData.water + " of 4 bottles";
+  }
+
+  function renderJsonBox() {
+    var ta = document.getElementById("jsonText");
+    ta.value = JSON.stringify(store, null, 2);
+  }
+
+  function renderAll() {
+    renderRoutines();
+    renderWater();
+    renderJsonBox();
+  }
+
+  /* ---------------- save / load file ---------------- */
+
+  function supportsBlobDownload() {
+    var a = document.createElement("a");
+    var hasBlob = !!window.Blob;
+    var hasUrl = !!(window.URL && window.URL.createObjectURL);
+    var hasDownload = typeof a.download !== "undefined";
+    return hasBlob && hasUrl && hasDownload;
+  }
+
+  function doSave() {
+    var json = JSON.stringify(store, null, 2);
+    if (supportsBlobDownload()) {
+      try {
+        var blob = new Blob([json], { type: "application/json" });
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "habits.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.setTimeout(function () {
+          window.URL.revokeObjectURL(url);
+        }, 2000);
+        setStatus("habits.json ready \u2014 choose \u201cSave to Files / Google Drive\u201d", true);
+        return;
+      } catch (e) {
+        /* fall through to the manual fallback below */
+      }
+    }
+    /* iOS 9 fallback: no Blob download support, so show the raw JSON
+       box for a manual copy-paste into a habits.json file. */
+    document.getElementById("jsonBox").style.display = "block";
+    renderJsonBox();
+    var ta = document.getElementById("jsonText");
+    ta.focus();
+    ta.setSelectionRange(0, ta.value.length);
+    setStatus("Your device can't auto-download files. JSON is shown below \u2014 copy it by hand.", true);
+  }
+
+  function doLoad() {
+    document.getElementById("fileInput").click();
+  }
+
+  function handleFileChosen(evt) {
+    var files = evt.target.files;
+    if (!files || files.length === 0) { return; }
+    var file = files[0];
+    var reader = new FileReader();
+    reader.onload = function (readerEvt) {
+      var text = readerEvt.target.result;
+      applyIncomingJson(text);
+    };
+    reader.onerror = function () {
+      setStatus("Could not read that file.", false);
+    };
+    reader.readAsText(file);
+  }
+
+  function applyIncomingJson(text) {
+    var parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      setStatus("That JSON could not be parsed. Nothing was changed.", false);
+      return;
+    }
+    if (typeof parsed !== "object" || parsed === null) {
+      setStatus("Unexpected JSON shape. Nothing was changed.", false);
+      return;
+    }
+    if (looksLikeOldFormat(parsed)) {
+      store = migrateOldFormat(parsed);
+    } else {
+      store = parsed;
+      if (!store.routines) { store.routines = defaultRoutines(); }
+      if (!store.days) { store.days = {}; }
+    }
+    ensureToday();
+    persistLocalStorage();
+    renderAll();
+    setStatus("habits.json loaded.", true);
+  }
+
+  /* ---------------- wire up ---------------- */
+
+  function init() {
+    document.getElementById("todayLabel").textContent = getTodayLabel();
+
+    loadFromLocalStorage();
+    renderAll();
+
+    document.getElementById("btnSave").addEventListener("click", doSave, false);
+    document.getElementById("btnLoad").addEventListener("click", doLoad, false);
+    document.getElementById("fileInput").addEventListener("change", handleFileChosen, false);
+
+    document.getElementById("btnAddRoutine").addEventListener("click", function () {
+      // Prevent stacking multiple uncommitted blank routine cards
+      var i;
+      for (i = 0; i < store.routines.length; i++) {
+        if (store.routines[i].isNew) { return; }
+      }
+
+      store.routines.push({ id: makeId("r"), name: "", habits: [], isNew: true });
+      renderAll();
+    }, false);
+
+    document.getElementById("btnJson").addEventListener("click", function () {
+      var box = document.getElementById("jsonBox");
+      if (box.style.display === "block") {
+        box.style.display = "none";
+      } else {
+        box.style.display = "block";
+        renderJsonBox();
+      }
+    }, false);
+
+    document.getElementById("btnApplyJson").addEventListener("click", function () {
+      var ta = document.getElementById("jsonText");
+      applyIncomingJson(ta.value);
+    }, false);
+  }
+
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    window.setTimeout(init, 0);
+  } else {
+    document.addEventListener("DOMContentLoaded", init, false);
+  }
+
+}());
+</script>
+
+</body>
+</html>
