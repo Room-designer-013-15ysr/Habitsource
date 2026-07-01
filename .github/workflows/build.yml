@@ -38,8 +38,8 @@ jobs:
             fi
           fi
           
-          # Writing config.xml cleanly on one line to avoid any indentation or syntax errors
-          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="AllowInlineMediaPlayback" value="false" /></widget>' > config.xml
+          # Adding deployment-target preference to allow compatibility down to iOS 9.0
+          echo '<?xml version="1.0" encoding="utf-8"?><widget id="com.custom.habittracker" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"><name>HabitTracker</name><description>Habit Tracker</description><content src="index.html" /><preference name="deployment-target" value="9.0" /><preference name="AllowInlineMediaPlayback" value="true" /></widget>' > config.xml
           
           cordova build ios --emulator
 
