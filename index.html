@@ -1,707 +1,617 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>HabitForger</title>
-<style>
-
-/* ---------------------------------------------------------
-   No CSS custom properties (--vars) are used anywhere below,
-   because iOS 9 / old WebKit does not support them.
-   No CSS Grid. Flexbox is written with -webkit- prefixes for
-   the old WebKit engine on iPad 2 / iOS 9.3.6.
---------------------------------------------------------- */
-
-* {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: #241c17;
-  color: #ece0c8;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  background-image:
-    -webkit-radial-gradient(circle at top, #362a20 0%, #241c17 70%);
-  background-image:
-    radial-gradient(circle at top, #362a20 0%, #241c17 70%);
-  padding: 18px 14px 60px 14px;
-}
-
-.wrap {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-/* ---------- Header ---------- */
-
-header {
-  text-align: center;
-  border-bottom: 1px solid #6b573f;
-  padding-bottom: 14px;
-  margin-bottom: 16px;
-}
-
-.topbar {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  justify-content: flex-start;
-  text-align: left;
-  margin-bottom: 12px;
-}
-
-.app-logo {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border-radius: 7px;
-  margin-right: 10px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-.app-name {
-  font-size: 18px;
-  letter-spacing: 0.5px;
-  color: #e8c987;
-  font-variant: small-caps;
-}
-
-header .subtitle {
-  font-size: 12px;
-  color: #a3927a;
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-#todayLabel {
-  font-size: 13px;
-  color: #cbb98d;
-  margin-top: 4px;
-  letter-spacing: 0.5px;
-}
-
-/* ---------- File controls ---------- */
-
-.filebar {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.btn {
-  display: inline-block;
-  background-color: #382c22;
-  border: 1px solid #6b573f;
-  color: #e8c987;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 13px;
-  padding: 9px 14px;
-  margin: 4px 5px;
-  border-radius: 3px;
-  text-align: center;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.btn:active {
-  background-color: #4a3a2a;
-}
-
-.btn.gold {
-  background-color: #4a3a22;
-  border-color: #e8c987;
-}
-
-.btn.small {
-  font-size: 11px;
-  padding: 6px 10px;
-}
-
-.filenote {
-  text-align: center;
-  font-size: 11px;
-  color: #7d6c53;
-  margin-top: 8px;
-  line-height: 1.5;
-  padding: 0 8px;
-}
-
-#fileInput { display: none; }
-
-/* ---------- Sections ---------- */
-
-.card {
-  background-color: #2c2219;
-  border: 1px solid #4a3c2c;
-  border-radius: 4px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  -webkit-box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-}
-
-.card-header {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  border-bottom: 1px solid #4a3c2c;
-  padding-bottom: 6px;
-  margin-bottom: 10px;
-}
-
-.card h2 {
-  font-size: 15px;
-  font-weight: normal;
-  font-variant: small-caps;
-  letter-spacing: 1px;
-  color: #cbb98d;
-  margin: 0;
-}
-
-.icon-btn {
-  color: #a3927a;
-  border: 1px solid #4a3c2c;
-  border-radius: 3px;
-  font-size: 14px;
-  width: 24px;
-  height: 24px;
-  line-height: 22px;
-  text-align: center;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-.icon-btn:active {
-  background-color: #3a2f22;
-}
-
-.header-actions {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-  justify-content: flex-end;
-}
-
-.header-actions .btn.small {
-  margin: 2px 0 2px 6px;
-}
-
-.icon-btn.reset-btn {
-  margin-right: 6px;
-  font-size: 13px;
-}
-
-.streak-badge {
-  font-size: 12px;
-  color: #d99a5b;
-  white-space: nowrap;
-  margin-left: 8px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-.streak-badge.zero {
-  color: #7d6c53;
-}
-
-.card h2.with-streak {
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-}
-
-/* ---------- Inline Form Fields ---------- */
-
-.inline-input {
-  background-color: #1e1712;
-  border: 1px solid #6b573f;
-  color: #ece0c8;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 14px;
-  padding: 6px 8px;
-  border-radius: 3px;
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  margin-right: 6px;
-  -webkit-appearance: none;
-}
-
-.inline-form-row {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  width: 100%;
-  padding: 4px 0;
-}
-
-/* ---------- Habit list ---------- */
-
-ul.habits {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-ul.habits li {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  padding: 10px 2px;
-  border-bottom: 1px solid #3a2f22;
-}
-
-ul.habits li:last-child {
-  border-bottom: none;
-}
-
-.checkbox {
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
-  border: 1px solid #a3927a;
-  border-radius: 2px;
-  margin-right: 12px;
-  position: relative;
-  background-color: #1e1712;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-.checkbox.checked {
-  background-color: #e8c987;
-  border-color: #e8c987;
-}
-
-.checkbox.checked:after {
-  content: "\2713";
-  position: absolute;
-  top: -3px;
-  left: 4px;
-  color: #241c17;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.habit-label {
-  font-size: 16px;
-  color: #ece0c8;
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-}
-
-.habit-label.done {
-  color: #7d6c53;
-  text-decoration: line-through;
-}
-
-.habit-del {
-  color: #7d6c53;
-  font-size: 18px;
-  padding: 2px 8px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-.habit-del:active {
-  color: #c98f7a;
-}
-
-.add-habit-row {
-  margin-top: 8px;
-  text-align: center;
-}
-
-.empty-note {
-  font-size: 12px;
-  color: #7d6c53;
-  font-style: italic;
-  padding: 6px 2px;
-}
-
-/* ---------- Water tracker ---------- */
-
-.water-row {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-around;
-  justify-content: space-around;
-  padding: 6px 0 2px 0;
-}
-
-.bottle {
-  font-size: 34px;
-  opacity: 0.28;
-  -webkit-transition: opacity 0.15s ease;
-  transition: opacity 0.15s ease;
-}
-
-.bottle.filled {
-  opacity: 1;
-}
-
-.water-count {
-  text-align: center;
-  font-size: 12px;
-  color: #a3927a;
-  margin-top: 8px;
-  letter-spacing: 0.5px;
-}
-
-.water-streak {
-  text-align: center;
-  font-size: 12px;
-  color: #d99a5b;
-  margin-top: 4px;
-  letter-spacing: 0.5px;
-}
-
-.water-streak.zero {
-  color: #7d6c53;
-}
-
-/* ---------- Add routine ---------- */
-
-.add-routine-bar {
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-/* ---------- JSON fallback box ---------- */
-
-#jsonBox {
-  display: none;
-}
-
-#jsonBox textarea {
-  width: 100%;
-  height: 160px;
-  background-color: #1e1712;
-  color: #ece0c8;
-  border: 1px solid #4a3c2c;
-  font-family: Menlo, Courier, monospace;
-  font-size: 11px;
-  padding: 8px;
-  -webkit-appearance: none;
-}
-
-#jsonBox .hint {
-  font-size: 11px;
-  color: #7d6c53;
-  margin-top: 6px;
-  line-height: 1.5;
-}
-
-#statusMsg {
-  text-align: center;
-  font-size: 12px;
-  color: #9fbf8f;
-  min-height: 16px;
-  margin-top: 8px;
-}
-
-footer {
-  text-align: center;
-  font-size: 11px;
-  color: #5f5040;
-  margin-top: 26px;
-  font-style: italic;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <title>Routine & Habit Tracker</title>
+  <style>
+    /* Global Styles & Theming */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      height: 32px;
+      margin-right: 12px;
+    }
+    .date-label {
+      font-size: 14px;
+      color: #aaa;
+    }
+    
+    /* Control Row & Buttons */
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #333;
+      border-color: #555;
+    }
+    .btn.gold {
+      background-color: #c5a059;
+      color: #121212;
+      border-color: #c5a059;
+      font-weight: bold;
+    }
+    .btn.gold:hover {
+      background-color: #d4b26f;
+    }
+    .btn.small {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    
+    /* Status Message Banner */
+    #statusMessage {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+    }
+    .status-success {
+      background-color: #1b4332;
+      color: #75e6da;
+      border: 1px solid #2d6a4f;
+    }
+    .status-error {
+      background-color: #4c1d1d;
+      color: #ff9999;
+      border: 1px solid #7a2828;
+    }
+
+    /* Routine Cards Layout */
+    .routines-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    @media (min-width: 600px) {
+      .routines-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .card {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .card-actions {
+      display: flex;
+      gap: 6px;
+    }
+    
+    /* Habits List Layout */
+    ul.habits {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px 0;
+      flex-grow: 1;
+    }
+    ul.habits li {
+      display: flex;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    ul.habits li:last-child {
+      border-bottom: none;
+    }
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #666;
+      border-radius: 3px;
+      margin-right: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox.checked {
+      background-color: #c5a059;
+      border-color: #c5a059;
+    }
+    .checkbox.checked::after {
+      content: "✓";
+      color: #121212;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .habit-label {
+      flex-grow: 1;
+      font-size: 14px;
+    }
+    .habit-label.done {
+      text-decoration: line-through;
+      color: #777;
+    }
+    .habit-del {
+      color: #888;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0 4px;
+    }
+    .habit-del:hover {
+      color: #ff6b6b;
+    }
+    
+    /* Inline Inputs & Form Rows */
+    .inline-form-row {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+    .inline-input {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      flex-grow: 1;
+    }
+    .add-habit-row {
+      margin-top: auto;
+      padding-top: 10px;
+    }
+    .empty-note {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    
+    /* Water Tracker Section */
+    .water-section {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 30px;
+    }
+    .water-row {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .bottle {
+      font-size: 32px;
+      cursor: pointer;
+      opacity: 0.3;
+      filter: grayscale(100%);
+      transition: opacity 0.2s, filter 0.2s;
+      user-select: none;
+    }
+    .bottle.filled {
+      opacity: 1;
+      filter: grayscale(0%);
+    }
+    .water-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .water-streak {
+      background-color: #2b4c7e;
+      color: #99ccff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .water-streak.zero {
+      background-color: #333;
+      color: #777;
+    }
+
+    /* JSON Box fallback panel */
+    #jsonBox {
+      display: none;
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    #jsonText {
+      width: 100%;
+      height: 150px;
+      background-color: #121212;
+      color: #a2b4c7;
+      font-family: monospace;
+      border: 1px solid #444;
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    
+    /* Utility Inputs Hidden */
+    #fileInput {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-<div class="wrap">
-
+<div class="container">
   <header>
-    <div class="topbar">
-      <img class="app-logo" id="appLogo" alt="HabitForger logo">
-      <div class="app-name">HabitForger</div>
-    </div>
-    <div class="subtitle">a quiet record of daily rites</div>
-    <div id="todayLabel"></div>
-
-    <div class="filebar">
-      <div class="btn gold" id="btnLoad">Load habits.json</div>
-      <div class="btn" id="btnSave">Save habits.json</div>
-    </div>
-    <div class="filebar">
-      <div class="btn small" id="btnJson">Show / Copy Raw JSON</div>
-      <div class="btn small" id="btnResetToday">Reset Today</div>
-    </div>
-    <div class="filenote">
-      Tap "Load" to import habits.json from the Files / Google Drive picker.
-      Tap "Save" to export it back out. On older iPads (iOS 9), if the
-      one-tap file save isn't available, use "Show / Copy Raw JSON" and
-      paste the text into a .json file in Google Drive by hand.
-    </div>
-    <div id="statusMsg"></div>
+    <h1><img id="appLogo" class="logo" alt="" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'></svg>"/>Habit Engine</h1>
+    <div id="todayLabel" class="date-label"></div>
   </header>
 
-  <div class="card" id="jsonBox">
-    <h2>Raw Data</h2>
-    <textarea id="jsonText" readonly onclick="this.select();"></textarea>
-    <div class="hint">Tap the box, then use the native "Select All" and "Copy" from the magnifier menu. To import instead, paste new JSON here, then tap "Apply Pasted JSON" below.</div>
-    <div class="filebar" style="margin-top:10px;">
-      <div class="btn small" id="btnApplyJson">Apply Pasted JSON</div>
+  <div class="controls">
+    <div id="btnAddRoutine" class="btn gold">+ New Routine</div>
+    <div id="btnResetToday" class="btn">Reset Today</div>
+    <div id="btnSave" class="btn">Export File</div>
+    <div id="btnLoad" class="btn">Import File</div>
+    <div id="btnJson" class="btn">Show/Hide JSON Block</div>
+    <input type="file" id="fileInput" accept=".json" />
+  </div>
+
+  <div id="statusMessage"></div>
+
+  <div id="routinesGrid" class="routines-grid"></div>
+
+  <div class="water-section">
+    <h3>Water Hydration Target</h3>
+    <div id="waterRow" class="water-row"></div>
+    <div class="water-meta">
+      <span id="waterCount">0 of 4 bottles met today</span>
+      <span id="waterStreak" class="water-streak zero">no water streak yet</span>
+    </div>
+    <div style="margin-top:12px;">
+      <div id="btnResetWaterStreak" class="btn small">Reset Streak</div>
     </div>
   </div>
 
-  <div id="routinesContainer"></div>
-
-  <div class="add-routine-bar">
-    <div class="btn gold" id="btnAddRoutine">+ Add Routine</div>
+  <div id="jsonBox">
+    <h4>Manual Workspace Context</h4>
+    <p style="font-size:12px; color:#aaa; margin-top:0;">Paste accurate JSON configurations below to manually apply or inspect backup states:</p>
+    <textarea id="jsonText"></textarea>
+    <div id="btnApplyJson" class="btn small gold">Apply Pasted JSON</div>
   </div>
-
-  <div class="card">
-    <div class="card-header">
-      <h2>Water &mdash; Four Bottles</h2>
-      <div class="btn small" id="btnResetWaterStreak">Reset Streak</div>
-    </div>
-    <div class="water-row" id="waterRow"></div>
-    <div class="water-count" id="waterCount"></div>
-    <div class="water-streak" id="waterStreak"></div>
-  </div>
-
-  <input type="file" id="fileInput" accept=".json,application/json">
-
-  <footer>habits.json &middot; kept locally and by hand</footer>
-
 </div>
 
 <script>
 (function () {
-
   "use strict";
 
-  /* ---------------------------------------------------------
-      Vanilla ES5 only. No let/const, no arrow functions, no
-      template literals, no fetch, no Promise chaining that
-      relies on modern engine features. Written to run on the
-      WebKit engine shipped with iOS 9.3.6 as well as any
-      current mobile Safari / Chrome.
+  // Tiny inline standard SVG asset definition placeholder for theme compatibility
+  var APP_LOGO_DATA_URI = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c5a059'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/></svg>";
 
-      Data shape (habits.json):
-      {
-        "routines": [
-          { "id": "r_xxx", "name": "Morning Rites",
-            "habits": [ { "id": "h_xxx", "label": "Brush Teeth" }, ... ],
-            "streakResetBefore": "2026-06-30" (optional; set by the
-              "Reset Streak" button, caps how far back that routine's
-              streak is allowed to count without touching history) }
-        ],
-        "days": {
-          "2026-07-01": { "entries": { "h_xxx": true }, "water": 2 }
-        },
-        "waterStreakResetBefore": "2026-06-30" (optional, same idea
-          for the water streak)
-      }
-  --------------------------------------------------------- */
+  var store = {
+    routines: [],
+    days: {},
+    waterStreakResetBefore: null
+  };
 
-  var APP_LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQwAAAEMCAIAAAC+7h/EAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAFRmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI2LTA3LTAxPC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkRhdGE+eyZxdW90O2RvYyZxdW90OzomcXVvdDtEQUhPSzVWNm9BMCZxdW90OywmcXVvdDt1c2VyJnF1b3Q7OiZxdW90O1VBR1dxUTVHejlJJnF1b3Q7LCZxdW90O2JyYW5kJnF1b3Q7OiZxdW90O0JBR1dxYUlRV2ZBJnF1b3Q7fTwvQXR0cmliOkRhdGE+CiAgICAgPEF0dHJpYjpFeHRJZD5kYmJjNDA0YS1lMjRkLTRmOTMtOTU0Yi03NTMzM2RiNDlhNjc8L0F0dHJpYjpFeHRJZD4KICAgICA8QXR0cmliOkZiSWQ+NTI1MjY1OTE0MTc5NTgwPC9BdHRyaWI6RmJJZD4KICAgICA8QXR0cmliOlRvdWNoVHlwZT4yPC9BdHRyaWI6VG91Y2hUeXBlPgogICAgPC9yZGY6bGk+CiAgIDwvcmRmOlNlcT4KICA8L0F0dHJpYjpBZHM+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0nJwogIHhtbG5zOmRjPSdodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4x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";
+  var dayData = {
+    entries: {},
+    water: 0,
+    completedWater: false
+  };
 
-  var STORAGE_KEY = "commonplaceHabitsData";
-
-  var todayKey = getTodayKey();
-  var store = null;     // { routines: [...], days: { ... } }
-  var dayData = null;   // shortcut to store.days[todayKey]
-
-  var idCounter = 0;
-
-  // Track dynamic editing elements to manage focus nicely
-  var activeRoutineInputId = null;
   var activeHabitInputId = null;
-
-  function makeId(prefix) {
-    idCounter += 1;
-    return prefix + "_" + Date.now() + "_" + idCounter;
-  }
-
-  function dateKeyFor(d) {
-    var y = d.getFullYear();
-    var m = d.getMonth() + 1;
-    var day = d.getDate();
-    if (m < 10) { m = "0" + m; }
-    if (day < 10) { day = "0" + day; }
-    return y + "-" + m + "-" + day;
-  }
-
-  function getTodayKey() {
-    return dateKeyFor(new Date());
-  }
-
-  function getTodayLabel() {
-    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    var d = new Date();
-    return days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
-  }
+  var statusTimeout = null;
 
   function defaultRoutines() {
     return [
       {
-        id: makeId("r"),
-        name: "Morning Rites",
+        id: "r_morning",
+        name: "Morning Routine",
         habits: [
-          { id: makeId("h"), label: "Morning Caffeinated Tea" },
-          { id: makeId("h"), label: "Brush Teeth" },
-          { id: makeId("h"), label: "Shave" },
-          { id: makeId("h"), label: "Shower" },
-          { id: makeId("h"), label: "Get Dressed" },
-          { id: makeId("h"), label: "Facial Care" }
+          { id: "h_m1", label: "Make bed" },
+          { id: "h_m2", label: "Drink full glass water" },
+          { id: "h_m3", label: "Stretch 5 mins" }
         ]
       },
       {
-        id: makeId("r"),
-        name: "Evening Rites",
+        id: "r_evening",
+        name: "Evening Routine",
         habits: [
-          { id: makeId("h"), label: "Read Before Bed" }
+          { id: "h_e1", label: "Clear desk surface" },
+          { id: "h_e2", label: "Read 10 pages" },
+          { id: "h_e3", label: "Plan next day" }
         ]
       }
     ];
   }
 
-  function defaultDay() {
-    /* entries/water are the live checkbox state, which Reset buttons
-       are allowed to clear. completed/completedWater are sticky
-       snapshots: once a routine (or water) is fully done on a given
-       day, that stays true for the rest of that day even if the
-       checkboxes are later cleared to redo them, so an in-day Reset
-       can never cost you that day's streak credit. */
-    return { entries: {}, water: 0, completed: {}, completedWater: false };
+  function getTodayKey() {
+    var d = new Date();
+    var yyyy = d.getFullYear();
+    var mm = d.getMonth() + 1;
+    var dd = d.getDate();
+    if (mm < 10) { mm = "0" + mm; }
+    if (dd < 10) { dd = "0" + dd; }
+    return yyyy + "-" + mm + "-" + dd;
   }
 
-  function allHabitIds() {
-    var ids = [];
-    var i, j, routine;
-    for (i = 0; i < store.routines.length; i++) {
-      routine = store.routines[i];
-      for (j = 0; j < routine.habits.length; j++) {
-        ids.push(routine.habits[j].id);
+  function getTodayLabel() {
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date().toLocaleDateString(undefined, options);
+  }
+
+  function getYesterdayKey() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    var yyyy = d.getFullYear();
+    var mm = d.getMonth() + 1;
+    var dd = d.getDate();
+    if (mm < 10) { mm = "0" + mm; }
+    if (dd < 10) { dd = "0" + dd; }
+    return yyyy + "-" + mm + "-" + dd;
+  }
+
+  function makeId(prefix) {
+    return prefix + "_" + Math.random().toString(36).substr(2, 9);
+  }
+
+  function setStatus(msg, isSuccess) {
+    var banner = document.getElementById("statusMessage");
+    banner.textContent = msg;
+    banner.className = isSuccess ? "status-success" : "status-error";
+    banner.style.display = "block";
+
+    if (statusTimeout) { window.clearTimeout(statusTimeout); }
+    statusTimeout = window.setTimeout(function () {
+      banner.style.display = "none";
+    }, 4000);
+  }
+
+  function loadFromLocalStorage() {
+    var raw = window.localStorage.getItem("habit_engine_data");
+    if (raw) {
+      try {
+        var parsed = JSON.parse(raw);
+        if (looksLikeOldFormat(parsed)) {
+          store = migrateOldFormat(parsed);
+        } else {
+          store = parsed;
+        }
+      } catch (e) {
+        store = { routines: defaultRoutines(), days: {} };
+      }
+    } else {
+      store = { routines: defaultRoutines(), days: {} };
+    }
+
+    if (!store.routines || store.routines.length === 0) {
+      store.routines = defaultRoutines();
+    }
+    if (!store.days) { store.days = {}; }
+
+    ensureToday();
+  }
+
+  function looksLikeOldFormat(parsed) {
+    return parsed && !parsed.routines && parsed.habits;
+  }
+
+  function migrateOldFormat(old) {
+    var migratedRoutines = [
+      { id: "r_morning", name: "Morning Routine", habits: [] },
+      { id: "r_evening", name: "Evening Routine", habits: [] }
+    ];
+
+    var oldHabits = old.habits || [];
+    var i;
+    for (i = 0; i < oldHabits.length; i++) {
+      var oh = oldHabits[i];
+      var newH = { id: oh.id, label: oh.label };
+      if (oh.id && oh.id.indexOf("h_m") === 0) {
+        migratedRoutines[0].habits.push(newH);
+      } else {
+        migratedRoutines[1].habits.push(newH);
       }
     }
-    return ids;
+
+    var newDays = {};
+    if (old.days) {
+      var key;
+      for (key in old.days) {
+        if (Object.prototype.hasOwnProperty.call(old.days, key)) {
+          var oldDay = old.days[key];
+          newDays[key] = {
+            entries: oldDay.entries || {},
+            water: oldDay.water || 0,
+            completedWater: oldDay.water >= 4
+          };
+        }
+      }
+    }
+
+    return {
+      routines: migratedRoutines,
+      days: newDays,
+      waterStreakResetBefore: old.waterStreakResetBefore || null
+    };
   }
 
   function ensureToday() {
-    if (!store.days[todayKey]) {
-      store.days[todayKey] = defaultDay();
+    var today = getTodayKey();
+    if (!store.days[today]) {
+      store.days[today] = {
+        entries: {},
+        water: 0,
+        completedWater: false
+      };
     }
-    dayData = store.days[todayKey];
+    dayData = store.days[today];
     if (!dayData.entries) { dayData.entries = {}; }
-    if (typeof dayData.water !== "number") { dayData.water = 0; }
-    if (!dayData.completed) { dayData.completed = {}; }
-    if (typeof dayData.completedWater !== "boolean") { dayData.completedWater = false; }
+  }
 
-    /* backfill any missing habit entries for today */
-    var ids = allHabitIds();
-    var i;
-    for (i = 0; i < ids.length; i++) {
-      if (typeof dayData.entries[ids[i]] === "undefined") {
-        dayData.entries[ids[i]] = false;
-      }
+  function persistLocalStorage() {
+    window.localStorage.setItem("habit_engine_data", JSON.stringify(store));
+  }
+
+  function checkDayRollover() {
+    var label = document.getElementById("todayLabel");
+    var currentLabelStr = getTodayLabel();
+    if (label.textContent !== currentLabelStr) {
+      label.textContent = currentLabelStr;
+      ensureToday();
+      renderAll();
     }
   }
 
-  /* -------- streaks -------- */
+  function resetAllToday() {
+    if (window.confirm("Are you sure you want to reset all tracking entries for today?")) {
+      dayData.entries = {};
+      dayData.water = 0;
+      dayData.completedWater = false;
+      persistLocalStorage();
+      renderAll();
+      setStatus("Today's logging structures cleared.", true);
+    }
+  }
 
-  /* Walks backward day by day from today, counting consecutive days for
-     which isDayComplete(dateKey) is true. If today isn't complete yet,
-     today is skipped (rather than breaking the streak) since the day
-     isn't over — the streak resumes counting from yesterday. Stops the
-     first time it hits an incomplete or missing day. */
-  function computeStreak(isDayComplete, resetBeforeKey) {
+  function isRoutineCompleteOnDay(routine, dayKey) {
+    var dObj = store.days[dayKey];
+    if (!dObj || !dObj.entries) { return false; }
+    if (!routine.habits || routine.habits.length === 0) { return false; }
+
+    var i;
+    for (i = 0; i < routine.habits.length; i++) {
+      if (!dObj.entries[routine.habits[i].id]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function markRoutineCompletionIfDone(routine) {
+    var today = getTodayKey();
+    if (isRoutineCompleteOnDay(routine, today)) {
+      // Intentionally reserved block hook to run calculations on completion
+    }
+  }
+
+  function calculateRoutineStreak(routine) {
+    if (routine.streakResetBefore) {
+      var today = getTodayKey();
+      if (today <= routine.streakResetBefore) { return 0; }
+    }
+
     var streak = 0;
     var d = new Date();
-    var todayK = dateKeyFor(d);
+    
+    // Check if finished today
+    var todayKey = getTodayKey();
+    var finishedToday = isRoutineCompleteOnDay(routine, todayKey);
 
-    /* resetBeforeKey is an optional floor (a date key) set by the
-       "Reset Streak" button. The streak calculation refuses to count
-       anything on or before that date, without altering the actual
-       logged history. */
-    if (resetBeforeKey && todayK <= resetBeforeKey) {
+    if (finishedToday) {
+      streak++;
+    }
+
+    // Go backward from yesterday
+    d.setDate(d.getDate() - 1);
+    while (true) {
+      var yyyy = d.getFullYear();
+      var mm = d.getMonth() + 1;
+      var dd = d.getDate();
+      if (mm < 10) { mm = "0" + mm; }
+      if (dd < 10) { dd = "0" + dd; }
+      var key = yyyy + "-" + mm + "-" + dd;
+
+      if (routine.streakResetBefore && key <= routine.streakResetBefore) {
+        break;
+      }
+
+      if (isRoutineCompleteOnDay(routine, key)) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+
+  function waterStreak() {
+    var today = getTodayKey();
+    if (store.waterStreakResetBefore && today <= store.waterStreakResetBefore) {
       return 0;
     }
 
-    if (!isDayComplete(todayK)) {
-      d.setDate(d.getDate() - 1);
+    var streak = 0;
+    var d = new Date();
+
+    var todayDataObj = store.days[today];
+    var finishedToday = (todayDataObj && todayDataObj.water >= 4);
+    if (finishedToday) {
+      streak++;
     }
 
-    var guard = 0; /* safety cap so a bug can't loop forever */
-    while (guard < 3660) {
-      var key = dateKeyFor(d);
-      if (resetBeforeKey && key <= resetBeforeKey) {
+    d.setDate(d.getDate() - 1);
+    while (true) {
+      var yyyy = d.getFullYear();
+      var mm = d.getMonth() + 1;
+      var dd = d.getDate();
+      if (mm < 10) { mm = "0" + mm; }
+      if (dd < 10) { dd = "0" + dd; }
+      var key = yyyy + "-" + mm + "-" + dd;
+
+      if (store.waterStreakResetBefore && key <= store.waterStreakResetBefore) {
         break;
       }
-      if (isDayComplete(key)) {
+
+      var dayObj = store.days[key];
+      if (dayObj && dayObj.water >= 4) {
         streak++;
         d.setDate(d.getDate() - 1);
-        guard++;
       } else {
         break;
       }
@@ -709,286 +619,49 @@ footer {
     return streak;
   }
 
-  function routineStreak(routine) {
-    if (routine.habits.length === 0) { return 0; }
-    var habitIds = [];
-    var i;
-    for (i = 0; i < routine.habits.length; i++) {
-      habitIds.push(routine.habits[i].id);
-    }
-    return computeStreak(function (key) {
-      var day = store.days[key];
-      if (!day) { return false; }
-      /* Sticky snapshot wins: if this routine was ever fully checked
-         off on this day, it counts — even if a later Reset cleared
-         the boxes to redo them. */
-      if (day.completed && day.completed[routine.id]) { return true; }
-      if (!day.entries) { return false; }
-      var j, sawAny = false;
-      for (j = 0; j < habitIds.length; j++) {
-        /* If this habit didn't exist yet on this historical day (no
-           entry was ever recorded for it), don't let its absence
-           retroactively break a streak earned before the habit was
-           added. Only habits actually tracked that day count. */
-        if (typeof day.entries[habitIds[j]] === "undefined") { continue; }
-        sawAny = true;
-        if (!day.entries[habitIds[j]]) { return false; }
-      }
-      return sawAny;
-    }, routine.streakResetBefore);
-  }
-
-  function waterStreak() {
-    return computeStreak(function (key) {
-      var day = store.days[key];
-      if (!day) { return false; }
-      if (day.completedWater) { return true; }
-      return (typeof day.water === "number") && day.water >= 4;
-    }, store.waterStreakResetBefore);
-  }
-
-  /* -------- resets -------- */
-
-  /* Called after any habit toggle/delete. If every habit in the
-     routine is now checked for today, snapshot that permanently in
-     dayData.completed so a later Reset can't take the credit away. */
-  function markRoutineCompletionIfDone(routine) {
-    if (!routine.habits.length) { return; }
-    var i;
-    for (i = 0; i < routine.habits.length; i++) {
-      if (!dayData.entries[routine.habits[i].id]) { return; }
-    }
-    dayData.completed[routine.id] = true;
-  }
-
-  function resetRoutineToday(routine) {
-    var i;
-    for (i = 0; i < routine.habits.length; i++) {
-      dayData.entries[routine.habits[i].id] = false;
-    }
-    persistLocalStorage();
-    renderAll();
-  }
-
-  var resetConfirmPending = false;
-  var resetConfirmTimer = null;
-
-  function resetAllToday() {
-    /* Some mobile webviews silently block or no-op window.confirm(),
-       which made this button look broken. Use a simple in-button
-       tap-to-confirm instead of a native dialog. */
-    var btn = document.getElementById("btnResetToday");
-
-    if (!resetConfirmPending) {
-      resetConfirmPending = true;
-      btn.textContent = "Tap again to confirm";
-      btn.className = "btn small gold";
-      resetConfirmTimer = window.setTimeout(function () {
-        resetConfirmPending = false;
-        btn.textContent = "Reset Today";
-        btn.className = "btn small";
-      }, 4000);
-      return;
-    }
-
-    window.clearTimeout(resetConfirmTimer);
-    resetConfirmPending = false;
-    btn.textContent = "Reset Today";
-    btn.className = "btn small";
-
-    var ids = allHabitIds();
-    var i;
-    for (i = 0; i < ids.length; i++) {
-      dayData.entries[ids[i]] = false;
-    }
-    dayData.water = 0;
-    persistLocalStorage();
-    renderAll();
-    setStatus("Today's routines have been reset.", true);
-  }
-
-  /* -------- generic multi-tap confirmation (no window.confirm, since
-     some mobile webviews silently block/no-op it) --------
-
-     warnings: an array of button labels to show on each tap before
-     the final one. The action fires on the tap AFTER the last
-     warning is shown, so warnings.length + 1 total taps are needed
-     — e.g. 2 warnings = 3 taps = "three-step verification". */
-  function wireStepConfirmButton(btn, warnings, action, idleLabel, idleClassName, confirmingClassName) {
+  /* Step confirm button engine utils to eliminate simple alerts */
+  function wireStepConfirmButton(domBtn, labelStepsArray, finalCallback, defaultLabel, baseClass, activeClass) {
     var step = 0;
-    var timer = null;
-
-    function idle() {
-      step = 0;
-      window.clearTimeout(timer);
-      btn.textContent = idleLabel;
-      btn.className = idleClassName;
-    }
-
-    btn.addEventListener("click", function (e) {
-      if (e) { e.stopPropagation(); }
-      window.clearTimeout(timer);
-      if (step < warnings.length) {
-        btn.textContent = warnings[step];
-        btn.className = confirmingClassName;
-        step++;
-        timer = window.setTimeout(idle, 6000);
-        return;
+    domBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (step === 0) {
+        step = 1;
+        domBtn.textContent = labelStepsArray[0];
+        domBtn.className = activeClass;
+      } else if (step === 1) {
+        if (labelStepsArray.length > 1) {
+          step = 2;
+          domBtn.textContent = labelStepsArray[1];
+        } else {
+          step = 0;
+          domBtn.textContent = defaultLabel;
+          domBtn.className = baseClass;
+          finalCallback();
+        }
+      } else if (step === 2) {
+        step = 0;
+        domBtn.textContent = defaultLabel;
+        domBtn.className = baseClass;
+        finalCallback();
       }
-      idle();
-      action();
     }, false);
 
-    idle();
-  }
-
-  /* -------- live day rollover --------
-
-     todayKey / dayData are normally set once at load. If the tab is
-     left open across midnight, this catches the date change without
-     needing a reload: run once on load, then on an interval, then
-     again whenever the tab becomes visible (covers phones locking
-     overnight and being reopened the next morning). */
-  function checkDayRollover() {
-    var freshKey = getTodayKey();
-    if (freshKey !== todayKey) {
-      todayKey = freshKey;
-      var label = document.getElementById("todayLabel");
-      if (label) { label.textContent = getTodayLabel(); }
-      ensureToday();
-      renderAll();
-    }
-  }
-
-  /* -------- migration from the old flat single-routine format -------- */
-
-  function looksLikeOldFormat(obj) {
-    if (!obj || typeof obj !== "object") { return false; }
-    if (obj.routines) { return false; }
-    /* old format was a map of date -> { habits: {...}, water: n } */
-    var key;
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        if (obj[key] && typeof obj[key] === "object" && obj[key].habits) {
-          return true;
-        }
+    document.addEventListener("click", function () {
+      if (step > 0) {
+        step = 0;
+        domBtn.textContent = defaultLabel;
+        domBtn.className = baseClass;
       }
-    }
-    return false;
+    }, false);
   }
-
-  function migrateOldFormat(oldStore) {
-    var labelMap = {
-      tea: "Morning Caffeinated Tea",
-      teeth: "Brush Teeth",
-      shave: "Shave",
-      shower: "Shower",
-      dressed: "Get Dressed",
-      facial: "Facial Care",
-      read: "Read Before Bed"
-    };
-    var idForOldKey = {};
-    var morningHabits = [];
-    var eveningHabits = [];
-    var oldKey;
-    for (oldKey in labelMap) {
-      if (labelMap.hasOwnProperty(oldKey)) {
-        var newId = makeId("h");
-        idForOldKey[oldKey] = newId;
-        if (oldKey === "read") {
-          eveningHabits.push({ id: newId, label: labelMap[oldKey] });
-        } else {
-          morningHabits.push({ id: newId, label: labelMap[oldKey] });
-        }
-      }
-    }
-
-    var newStore = {
-      routines: [
-        { id: makeId("r"), name: "Morning Rites", habits: morningHabits },
-        { id: makeId("r"), name: "Evening Rites", habits: eveningHabits }
-      ],
-      days: {}
-    };
-
-    var dateKey;
-    for (dateKey in oldStore) {
-      if (oldStore.hasOwnProperty(dateKey)) {
-        var oldDay = oldStore[dateKey];
-        var entries = {};
-        var k;
-        for (k in oldDay.habits) {
-          if (oldDay.habits.hasOwnProperty(k) && idForOldKey[k]) {
-            entries[idForOldKey[k]] = !!oldDay.habits[k];
-          }
-        }
-        newStore.days[dateKey] = {
-          entries: entries,
-          water: typeof oldDay.water === "number" ? oldDay.water : 0
-        };
-      }
-    }
-
-    return newStore;
-  }
-
-  /* -------- persistence -------- */
-
-  function loadFromLocalStorage() {
-    var raw = null;
-    try {
-      raw = window.localStorage.getItem(STORAGE_KEY);
-    } catch (e) {
-      raw = null;
-    }
-    var parsed = null;
-    if (raw) {
-      try {
-        parsed = JSON.parse(raw);
-      } catch (e2) {
-        parsed = null;
-      }
-    }
-
-    if (!parsed) {
-      store = { routines: defaultRoutines(), days: {} };
-    } else if (looksLikeOldFormat(parsed)) {
-      store = migrateOldFormat(parsed);
-    } else {
-      store = parsed;
-      if (!store.routines) { store.routines = defaultRoutines(); }
-      if (!store.days) { store.days = {}; }
-    }
-    ensureToday();
-  }
-
-  function persistLocalStorage() {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-    } catch (e) {
-      /* private browsing or storage disabled: silently ignore, data
-         still lives in memory and can be exported by hand */
-    }
-  }
-
-  function setStatus(msg, isGood) {
-    var el = document.getElementById("statusMsg");
-    el.style.color = isGood ? "#9fbf8f" : "#c98f7a";
-    el.textContent = msg;
-    window.setTimeout(function () {
-      if (el.textContent === msg) { el.textContent = ""; }
-    }, 4000);
-  }
-
-  /* ---------------- rendering ---------------- */
 
   function renderRoutines() {
-    var container = document.getElementById("routinesContainer");
-    container.innerHTML = "";
+    var grid = document.getElementById("routinesGrid");
+    grid.innerHTML = "";
 
     var i;
     for (i = 0; i < store.routines.length; i++) {
-      container.appendChild(buildRoutineCard(store.routines[i]));
+      grid.appendChild(buildRoutineCard(store.routines[i]));
     }
   }
 
@@ -997,176 +670,204 @@ footer {
     card.className = "card";
 
     var headerRow = document.createElement("div");
-    headerRow.className = "card-header";
+    headerRow.className = "card-header-row";
 
-    // Check if this routine is currently being named/created
     if (routine.isNew) {
-      var formRow = document.createElement("div");
-      formRow.className = "inline-form-row";
+      var inlineForm = document.createElement("div");
+      inlineForm.className = "inline-form-row";
 
       var input = document.createElement("input");
       input.type = "text";
       input.className = "inline-input";
-      input.placeholder = "Routine Name...";
-      input.value = routine.name;
+      input.placeholder = "Routine Title Name...";
+      inlineForm.appendChild(input);
 
       var saveBtn = document.createElement("div");
       saveBtn.className = "btn small gold";
       saveBtn.textContent = "Save";
-
-      var cancelBtn = document.createElement("div");
-      cancelBtn.className = "btn small";
-      cancelBtn.textContent = "Cancel";
-
-      var commitRoutine = function () {
-        var name = trimStr(input.value);
-        if (name === "") { return; }
+      
+      var doSave = function () {
+        var val = trimStr(input.value);
+        if (val === "") { return; }
+        routine.name = val;
         delete routine.isNew;
-        routine.name = name;
-        activeRoutineInputId = null;
         persistLocalStorage();
         renderAll();
       };
+      saveBtn.addEventListener("click", doSave, false);
+      inlineForm.appendChild(saveBtn);
 
-      var dropRoutine = function () {
+      var cancelBtn = document.createElement("div");
+      cancelBtn.className = "btn small";
+      cancelBtn.textContent = "✕";
+      cancelBtn.addEventListener("click", function () {
         var idx = store.routines.indexOf(routine);
-        if (idx > -1) {
-          store.routines.splice(idx, 1);
-        }
-        activeRoutineInputId = null;
+        if (idx > -1) { store.routines.splice(idx, 1); }
         renderAll();
-      };
-
-      saveBtn.addEventListener("click", commitRoutine, false);
-      cancelBtn.addEventListener("click", dropRoutine, false);
-      input.addEventListener("keydown", function (e) {
-        if (e.keyCode === 13) { commitRoutine(); }
-        if (e.keyCode === 27) { dropRoutine(); }
       }, false);
+      inlineForm.appendChild(cancelBtn);
 
-      formRow.appendChild(input);
-      formRow.appendChild(saveBtn);
-      formRow.appendChild(cancelBtn);
-      headerRow.appendChild(formRow);
-
-      // Autofocus target for iOS 9 / modern layouts safely
+      headerRow.appendChild(inlineForm);
+      card.appendChild(headerRow);
+      
       window.setTimeout(function () { input.focus(); }, 50);
-
-    } else {
-      var h2 = document.createElement("h2");
-      h2.className = "with-streak";
-      h2.textContent = routine.name;
-
-      var streakDays = routineStreak(routine);
-      var streakBadge = document.createElement("div");
-      streakBadge.className = streakDays > 0 ? "streak-badge" : "streak-badge zero";
-      streakBadge.textContent = streakDays > 0
-        ? "\uD83D\uDD25 " + streakDays + (streakDays === 1 ? " day" : " days")
-        : "no streak yet";
-
-      var actions = document.createElement("div");
-      actions.className = "header-actions";
-
-      var resetRoutineBtn = document.createElement("div");
-      resetRoutineBtn.className = "btn small";
-      resetRoutineBtn.title = "Reset today's checkmarks for this routine";
-      wireStepConfirmButton(
-        resetRoutineBtn,
-        ["Sure? Tap again"],
-        function () {
-          resetRoutineToday(routine);
-          setStatus("Today's checkmarks reset for \"" + routine.name + "\".", true);
-        },
-        "\u21BA Reset",
-        "btn small",
-        "btn small gold"
-      );
-
-      var resetStreakBtn = document.createElement("div");
-      resetStreakBtn.className = "btn small";
-      resetStreakBtn.title = "Reset only this routine's streak count (keeps today's checkmarks and full history)";
-      wireStepConfirmButton(
-        resetStreakBtn,
-        ["Sure? Tap again", "Tap once more to reset"],
-        function () {
-          routine.streakResetBefore = getTodayKey();
-          persistLocalStorage();
-          renderAll();
-          setStatus("Streak for \"" + routine.name + "\" reset.", true);
-        },
-        "Reset Streak",
-        "btn small",
-        "btn small gold"
-      );
-
-      var delRoutineBtn = document.createElement("div");
-      delRoutineBtn.className = "btn small";
-      delRoutineBtn.title = "Delete the whole routine";
-      wireStepConfirmButton(
-        delRoutineBtn,
-        ["Delete? Tap again", "Tap once more to delete"],
-        function () {
-          var idx = store.routines.indexOf(routine);
-          if (idx > -1) {
-            var deletedName = routine.name;
-            store.routines.splice(idx, 1);
-            persistLocalStorage();
-            renderAll();
-            setStatus("\"" + deletedName + "\" deleted.", true);
-          }
-        },
-        "\u2715 Delete",
-        "btn small",
-        "btn small gold"
-      );
-
-      actions.appendChild(resetRoutineBtn);
-      actions.appendChild(resetStreakBtn);
-      actions.appendChild(delRoutineBtn);
-
-      headerRow.appendChild(h2);
-      headerRow.appendChild(streakBadge);
-      headerRow.appendChild(actions);
+      return card;
     }
 
+    var titleSpan = document.createElement("div");
+    titleSpan.className = "card-title";
+    
+    var rStreak = calculateRoutineStreak(routine);
+    titleSpan.textContent = routine.name + (rStreak > 0 ? " 🔥 " + rStreak : "");
+    headerRow.appendChild(titleSpan);
+
+    var actionsWrapper = document.createElement("div");
+    actionsWrapper.className = "card-actions";
+
+    var rReset = document.createElement("div");
+    rReset.className = "btn small";
+    rReset.textContent = "↺ Reset";
+    rReset.addEventListener("click", function () {
+      if (routine.habits) {
+        var hIdx;
+        for (hIdx = 0; hIdx < routine.habits.length; hIdx++) {
+          dayData.entries[routine.habits[hIdx].id] = false;
+        }
+        persistLocalStorage();
+        renderAll();
+        setStatus("Routine elements unchecked for today.", true);
+      }
+    }, false);
+    actionsWrapper.appendChild(rReset);
+
+    var rStreakReset = document.createElement("div");
+    rStreakReset.className = "btn small";
+    rStreakReset.textContent = "Reset Streak";
+    wireStepConfirmButton(
+      rStreakReset,
+      ["Confirm Reset?"],
+      function () {
+        routine.streakResetBefore = getTodayKey();
+        persistLocalStorage();
+        renderAll();
+        setStatus("Streak calculation counter zeroed out.", true);
+      },
+      "Reset Streak",
+      "btn small",
+      "btn small gold"
+    );
+    actionsWrapper.appendChild(rStreakReset);
+
+    var rDel = document.createElement("div");
+    rDel.className = "btn small";
+    rDel.textContent = "✕";
+    wireStepConfirmButton(
+      rDel,
+      ["Delete entire card?"],
+      function () {
+        var idx = store.routines.indexOf(routine);
+        if (idx > -1) {
+          if (routine.habits) {
+            var hI;
+            for (hI = 0; hI < routine.habits.length; hI++) {
+              delete dayData.entries[routine.habits[hI].id];
+            }
+          }
+          store.routines.splice(idx, 1);
+          persistLocalStorage();
+          renderAll();
+          setStatus("Routine item removed permanently.", true);
+        }
+      },
+      "✕",
+      "btn small",
+      "btn small gold"
+    );
+    actionsWrapper.appendChild(rDel);
+
+    headerRow.appendChild(actionsWrapper);
     card.appendChild(headerRow);
 
     var list = document.createElement("ul");
     list.className = "habits";
 
-    if (routine.habits.length === 0) {
+    var habits = routine.habits || [];
+    if (habits.length === 0 && !routine.isNew) {
       var empty = document.createElement("div");
       empty.className = "empty-note";
-      empty.textContent = "No habits yet in this routine.";
+      empty.textContent = "No habits added here yet.";
       card.appendChild(empty);
-    } else {
-      var j;
-      for (j = 0; j < routine.habits.length; j++) {
-        list.appendChild(buildHabitRow(routine, routine.habits[j]));
-      }
-      card.appendChild(list);
     }
 
-    // Only show the "+ Add Habit" bar if we aren't editing the routine header
+    var j;
+    for (j = 0; j < habits.length; j++) {
+      list.appendChild(buildHabitRow(routine, habits[j]));
+    }
+    card.appendChild(list);
+
+    // Only render the "Add Habit" action row on fully saved/existing routines
     if (!routine.isNew) {
-      var addRow = document.createElement("div");
-      addRow.className = "add-habit-row";
-      var addBtn = document.createElement("div");
-      addBtn.className = "btn small";
-      addBtn.textContent = "+ Add Habit";
-      addBtn.addEventListener("click", function () {
-        // Prevent stacking multiple blank entries in the same routine
-        var k;
-        for (k = 0; k < routine.habits.length; k++) {
-          if (routine.habits[k].isNew) { return; }
-        }
-        
-        var newHabit = { id: makeId("h"), label: "", isNew: true };
-        routine.habits.push(newHabit);
-        renderAll();
-      }, false);
-      addRow.appendChild(addBtn);
-      card.appendChild(addRow);
+      var addHabitRow = document.createElement("div");
+      addHabitRow.className = "add-habit-row";
+
+      if (activeHabitInputId === routine.id) {
+        var habitForm = document.createElement("div");
+        habitForm.className = "inline-form-row";
+
+        var hInput = document.createElement("input");
+        hInput.type = "text";
+        hInput.className = "inline-input";
+        hInput.placeholder = "New Habit Name...";
+
+        var hSave = document.createElement("div");
+        hSave.className = "btn small gold";
+        hSave.textContent = "Add";
+
+        var hCancel = document.createElement("div");
+        hCancel.className = "btn small";
+        hCancel.textContent = "✕";
+
+        var commitHabit = function () {
+          var val = trimStr(hInput.value);
+          if (val !== "") {
+            var newHabit = { id: makeId("h"), label: val };
+            routine.habits.push(newHabit);
+            dayData.entries[newHabit.id] = false;
+            markRoutineCompletionIfDone(routine);
+            persistLocalStorage();
+          }
+          activeHabitInputId = null;
+          renderAll();
+        };
+
+        hSave.addEventListener("click", commitHabit, false);
+        hCancel.addEventListener("click", function () {
+          activeHabitInputId = null;
+          renderAll();
+        }, false);
+
+        hInput.addEventListener("keydown", function (e) {
+          if (e.keyCode === 13) { commitHabit(); }
+          if (e.keyCode === 27) { activeHabitInputId = null; renderAll(); }
+        }, false);
+
+        habitForm.appendChild(hInput);
+        habitForm.appendChild(hSave);
+        habitForm.appendChild(hCancel);
+        addHabitRow.appendChild(habitForm);
+
+        window.setTimeout(function () { hInput.focus(); }, 50);
+      } else {
+        var addHabitBtn = document.createElement("div");
+        addHabitBtn.className = "btn small";
+        addHabitBtn.textContent = "+ Add Habit";
+        addHabitBtn.addEventListener("click", function () {
+          activeHabitInputId = routine.id;
+          renderAll();
+        }, false);
+        addHabitRow.appendChild(addHabitBtn);
+      }
+      card.appendChild(addHabitRow);
     }
 
     return card;
@@ -1175,232 +876,144 @@ footer {
   function buildHabitRow(routine, habit) {
     var li = document.createElement("li");
 
-    if (habit.isNew) {
-      var formRow = document.createElement("div");
-      formRow.className = "inline-form-row";
+    var isChecked = !!dayData.entries[habit.id];
 
-      var input = document.createElement("input");
-      input.type = "text";
-      input.className = "inline-input";
-      input.placeholder = "Habit text...";
+    var box = document.createElement("div");
+    box.className = isChecked ? "checkbox checked" : "checkbox";
+    box.addEventListener("click", function () {
+      dayData.entries[habit.id] = !dayData.entries[habit.id];
+      if (dayData.entries[habit.id]) {
+        markRoutineCompletionIfDone(routine);
+      }
+      persistLocalStorage();
+      renderAll();
+    }, false);
 
-      var saveBtn = document.createElement("div");
-      saveBtn.className = "btn small gold";
-      saveBtn.textContent = "Save";
+    var label = document.createElement("div");
+    label.className = isChecked ? "habit-label done" : "habit-label";
+    label.textContent = habit.label;
 
-      var cancelBtn = document.createElement("div");
-      cancelBtn.className = "btn small";
-      cancelBtn.textContent = "Cancel";
-
-      var commitHabit = function () {
-        var labelText = trimStr(input.value);
-        if (labelText === "") { return; }
-        delete habit.isNew;
-        habit.label = labelText;
-        dayData.entries[habit.id] = false;
-        persistLocalStorage();
-        renderAll();
-      };
-
-      var dropHabit = function () {
+    var del = document.createElement("div");
+    del.className = "habit-del";
+    del.innerHTML = "&times;";
+    wireStepConfirmButton(
+      del,
+      ["&times;"],
+      function () {
         var idx = routine.habits.indexOf(habit);
         if (idx > -1) {
           routine.habits.splice(idx, 1);
-        }
-        renderAll();
-      };
-
-      saveBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        commitHabit();
-      }, false);
-
-      cancelBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        dropHabit();
-      }, false);
-
-      input.addEventListener("keydown", function (e) {
-        if (e.keyCode === 13) { commitHabit(); }
-        if (e.keyCode === 27) { dropHabit(); }
-      }, false);
-
-      formRow.appendChild(input);
-      formRow.appendChild(saveBtn);
-      formRow.appendChild(cancelBtn);
-      li.appendChild(formRow);
-
-      window.setTimeout(function () { input.focus(); }, 50);
-
-    } else {
-      var box = document.createElement("div");
-      box.className = "checkbox";
-      if (dayData.entries[habit.id]) {
-        box.className = "checkbox checked";
-      }
-
-      var label = document.createElement("div");
-      label.className = "habit-label";
-      if (dayData.entries[habit.id]) {
-        label.className = "habit-label done";
-      }
-      label.textContent = habit.label;
-
-      var del = document.createElement("div");
-      del.className = "habit-del";
-      del.textContent = "\u2715";
-      del.addEventListener("click", function (evt) {
-        evt.stopPropagation();
-        var idx = routine.habits.indexOf(habit);
-        if (idx > -1) {
-          routine.habits.splice(idx, 1);
+          delete dayData.entries[habit.id];
           markRoutineCompletionIfDone(routine);
           persistLocalStorage();
           renderAll();
         }
-      }, false);
+      },
+      "&times;",
+      "habit-del",
+      "habit-del"
+    );
 
-      li.appendChild(box);
-      li.appendChild(label);
-      li.appendChild(del);
-
-      li.addEventListener("click", function () {
-        dayData.entries[habit.id] = !dayData.entries[habit.id];
-        markRoutineCompletionIfDone(routine);
-        persistLocalStorage();
-        renderAll();
-      }, false);
-    }
-
+    li.appendChild(box);
+    li.appendChild(label);
+    li.appendChild(del);
     return li;
-  }
-
-  function trimStr(s) {
-    return s.replace(/^\s+|\s+$/g, "");
   }
 
   function renderWater() {
     var row = document.getElementById("waterRow");
     row.innerHTML = "";
+
+    var currentCount = dayData.water || 0;
     var i;
-    for (i = 0; i < 4; i++) {
+    for (i = 1; i <= 4; i++) {
+      var bottle = document.createElement("div");
+      bottle.className = i <= currentCount ? "bottle filled" : "bottle";
+      bottle.innerHTML = "&#x1F964;"; /* standard unicode water bottle icon */
+      
       (function (index) {
-        var span = document.createElement("div");
-        span.className = "bottle";
-        if (index < dayData.water) {
-          span.className = "bottle filled";
-        }
-        span.textContent = "\uD83C\uDFFA"; /* amphora glyph, safe unicode literal */
-        span.addEventListener("click", function () {
-          if (dayData.water === index + 1) {
-            dayData.water = index;
+        bottle.addEventListener("click", function () {
+          if (dayData.water === index) {
+            dayData.water = index - 1;
           } else {
-            dayData.water = index + 1;
+            dayData.water = index;
           }
-          if (dayData.water >= 4) { dayData.completedWater = true; }
+          if (dayData.water >= 4) {
+            dayData.completedWater = true;
+          }
           persistLocalStorage();
           renderAll();
         }, false);
-        row.appendChild(span);
       })(i);
-    }
-    var countEl = document.getElementById("waterCount");
-    countEl.textContent = dayData.water + " of 4 bottles";
 
-    var streakDays = waterStreak();
-    var streakEl = document.getElementById("waterStreak");
-    if (streakDays > 0) {
-      streakEl.className = "water-streak";
-      streakEl.textContent = "\uD83D\uDD25 " + streakDays + (streakDays === 1 ? " day streak" : " day streak");
-    } else {
-      streakEl.className = "water-streak zero";
-      streakEl.textContent = "no streak yet";
+      row.appendChild(bottle);
     }
-  }
 
-  function renderJsonBox() {
-    var ta = document.getElementById("jsonText");
-    ta.value = JSON.stringify(store, null, 2);
+    document.getElementById("waterCount").textContent = currentCount + " of 4 bottles standard goal met today";
+
+    var wStreak = waterStreak();
+    var wBadge = document.getElementById("waterStreak");
+    wBadge.className = wStreak > 0 ? "water-streak" : "water-streak zero";
+    wBadge.textContent = wStreak > 0
+      ? "\uD83D\uDD25 " + wStreak + (wStreak === 1 ? " day streak" : " days streak")
+      : "no water streak yet";
   }
 
   function renderAll() {
     renderRoutines();
     renderWater();
-    renderJsonBox();
   }
 
-  /* ---------------- save / load file ---------------- */
-
-  function supportsBlobDownload() {
-    var a = document.createElement("a");
-    var hasBlob = !!window.Blob;
-    var hasUrl = !!(window.URL && window.URL.createObjectURL);
-    var hasDownload = typeof a.download !== "undefined";
-    return hasBlob && hasUrl && hasDownload;
+  function trimStr(str) {
+    if (!str) { return ""; }
+    return str.replace(/^\s+|\s+$/g, '');
   }
 
-  function doSave() {
-    var json = JSON.stringify(store, null, 2);
-    if (supportsBlobDownload()) {
-      try {
-        var blob = new Blob([json], { type: "application/json" });
-        var url = window.URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = url;
-        a.download = "habits.json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.setTimeout(function () {
-          window.URL.revokeObjectURL(url);
-        }, 2000);
-        setStatus("habits.json ready \u2014 choose \u201cSave to Files / Google Drive\u201d", true);
-        return;
-      } catch (e) {
-        /* fall through to the manual fallback below */
-      }
-    }
-    /* iOS 9 fallback: no Blob download support, so show the raw JSON
-       box for a manual copy-paste into a habits.json file. */
-    document.getElementById("jsonBox").style.display = "block";
-    renderJsonBox();
-    var ta = document.getElementById("jsonText");
-    ta.focus();
-    ta.setSelectionRange(0, ta.value.length);
-    setStatus("Your device can't auto-download files. JSON is shown below \u2014 copy it by hand.", true);
-  }
+  /* -------- Native File Export / Raw Text Box fallback -------- */
 
-  function doLoad() {
-    document.getElementById("fileInput").click();
-  }
+  function exportJson() {
+    var dataStr = JSON.stringify(store, null, 2);
+    
+    // Fallback UI population automatically updates layout box
+    document.getElementById("jsonText").value = dataStr;
 
-  function handleFileChosen(evt) {
-    var files = evt.target.files;
-    if (!files || files.length === 0) { return; }
-    var file = files[0];
-    var reader = new FileReader();
-    reader.onload = function (readerEvt) {
-      var text = readerEvt.target.result;
-      applyIncomingJson(text);
-    };
-    reader.onerror = function () {
-      setStatus("Could not read that file.", false);
-    };
-    reader.readAsText(file);
-  }
-
-  function applyIncomingJson(text) {
-    var parsed;
     try {
-      parsed = JSON.parse(text);
+      var blob = new Blob([dataStr], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "habits.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus("Exported successfully to habits.json", true);
     } catch (e) {
-      setStatus("That JSON could not be parsed. Nothing was changed.", false);
+      document.getElementById("jsonBox").style.display = "block";
+      setStatus("One-tap file saving failed. Copying raw text representation block manually below instead.", false);
+    }
+  }
+
+  function toggleJsonBox() {
+    var box = document.getElementById("jsonBox");
+    if (box.style.display === "block") {
+      box.style.display = "none";
+    } else {
+      box.style.display = "block";
+      document.getElementById("jsonText").value = JSON.stringify(store, null, 2);
+    }
+  }
+
+  function applyPastedJson() {
+    var txt = document.getElementById("jsonText").value;
+    var parsed = null;
+    try {
+      parsed = JSON.parse(txt);
+    } catch (e) {
+      setStatus("Invalid data syntax error. Please double check accuracy.", false);
       return;
     }
-    if (typeof parsed !== "object" || parsed === null) {
-      setStatus("Unexpected JSON shape. Nothing was changed.", false);
-      return;
-    }
+
     if (looksLikeOldFormat(parsed)) {
       store = migrateOldFormat(parsed);
     } else {
@@ -1411,81 +1024,100 @@ footer {
     ensureToday();
     persistLocalStorage();
     renderAll();
-    setStatus("habits.json loaded.", true);
+    document.getElementById("jsonBox").style.display = "none";
+    setStatus("Successfully read structure entries file tracking applied!", true);
   }
 
-  /* ---------------- wire up ---------------- */
+  function handleFileSelect(e) {
+    var files = e.target.files;
+    if (!files || files.length === 0) { return; }
+    var file = files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      var txt = evt.target.result;
+      var parsed = null;
+      try {
+        parsed = JSON.parse(txt);
+      } catch (err) {
+        setStatus("Could not read file structural settings. Invalid template.", false);
+        return;
+      }
 
+      if (looksLikeOldFormat(parsed)) {
+        store = migrateOldFormat(parsed);
+      } else {
+        store = parsed;
+        if (!store.routines) { store.routines = defaultRoutines(); }
+        if (!store.days) { store.days = {}; }
+      }
+      ensureToday();
+      persistLocalStorage();
+      renderAll();
+      setStatus("Loaded custom data successfully!", true);
+    };
+    reader.readAsText(file);
+  }
+
+  /* -------- App Setup Hook initialization -------- */
   function init() {
-    document.getElementById("todayLabel").textContent = getTodayLabel();
     document.getElementById("appLogo").src = APP_LOGO_DATA_URI;
+    document.getElementById("todayLabel").textContent = getTodayLabel();
 
     loadFromLocalStorage();
-    renderAll();
 
-    document.getElementById("btnSave").addEventListener("click", doSave, false);
-    document.getElementById("btnLoad").addEventListener("click", doLoad, false);
-    document.getElementById("fileInput").addEventListener("change", handleFileChosen, false);
     document.getElementById("btnResetToday").addEventListener("click", resetAllToday, false);
+    document.getElementById("btnSave").addEventListener("click", exportJson, false);
+    document.getElementById("btnJson").addEventListener("click", toggleJsonBox, false);
+    document.getElementById("btnApplyJson").addEventListener("click", applyPastedJson, false);
+
+    document.getElementById("btnLoad").addEventListener("click", function () {
+      document.getElementById("fileInput").click();
+    }, false);
+    document.getElementById("fileInput").addEventListener("change", handleFileSelect, false);
 
     document.getElementById("btnAddRoutine").addEventListener("click", function () {
-      // Prevent stacking multiple uncommitted blank routine cards
+      // Don't add multiple new unsaved fields concurrently
       var i;
       for (i = 0; i < store.routines.length; i++) {
         if (store.routines[i].isNew) { return; }
       }
-
-      store.routines.push({ id: makeId("r"), name: "", habits: [], isNew: true });
+      var newR = {
+        id: makeId("r"),
+        name: "",
+        habits: [],
+        isNew: true
+      };
+      store.routines.push(newR);
       renderAll();
-    }, false);
-
-    document.getElementById("btnJson").addEventListener("click", function () {
-      var box = document.getElementById("jsonBox");
-      if (box.style.display === "block") {
-        box.style.display = "none";
-      } else {
-        box.style.display = "block";
-        renderJsonBox();
-      }
-    }, false);
-
-    document.getElementById("btnApplyJson").addEventListener("click", function () {
-      var ta = document.getElementById("jsonText");
-      applyIncomingJson(ta.value);
     }, false);
 
     wireStepConfirmButton(
       document.getElementById("btnResetWaterStreak"),
-      ["Sure? Tap again", "Tap once more to reset"],
+      ["Are you sure?", "Tap once more to reset water streak"],
       function () {
         store.waterStreakResetBefore = getTodayKey();
         persistLocalStorage();
         renderAll();
-        setStatus("Water streak reset.", true);
+        setStatus("Water logging calculation metrics reset.", true);
       },
       "Reset Streak",
       "btn small",
       "btn small gold"
     );
 
-    /* Catch the date changing while the tab stays open: check now,
-       then every 60s, then again whenever the tab regains focus
-       (covers a phone screen locking overnight). */
-    checkDayRollover();
+    renderAll();
+
+    // Setup seamless midnight rollover processing triggers
     window.setInterval(checkDayRollover, 60000);
-    document.addEventListener("visibilitychange", function () {
-      if (!document.hidden) { checkDayRollover(); }
-    }, false);
+    if (typeof document.addEventListener !== "undefined") {
+      document.addEventListener("visibilitychange", checkDayRollover, false);
+    }
+    window.addEventListener("focus", checkDayRollover, false);
   }
 
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    window.setTimeout(init, 0);
-  } else {
-    document.addEventListener("DOMContentLoaded", init, false);
-  }
+  window.addEventListener("load", init, false);
 
-}());
+})();
 </script>
-
 </body>
 </html>
