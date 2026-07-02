@@ -221,8 +221,15 @@ header .subtitle {
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+.header-actions .btn.small {
+  margin: 2px 0 2px 6px;
 }
 
 .icon-btn.reset-btn {
@@ -514,6 +521,7 @@ footer {
   <div class="card">
     <div class="card-header">
       <h2>Water &mdash; Four Bottles</h2>
+      <div class="btn small" id="btnResetWaterStreak">Reset Streak</div>
     </div>
     <div class="water-row" id="waterRow"></div>
     <div class="water-count" id="waterCount"></div>
@@ -542,11 +550,16 @@ footer {
       {
         "routines": [
           { "id": "r_xxx", "name": "Morning Rites",
-            "habits": [ { "id": "h_xxx", "label": "Brush Teeth" }, ... ] }
+            "habits": [ { "id": "h_xxx", "label": "Brush Teeth" }, ... ],
+            "streakResetBefore": "2026-06-30" (optional; set by the
+              "Reset Streak" button, caps how far back that routine's
+              streak is allowed to count without touching history) }
         ],
         "days": {
           "2026-07-01": { "entries": { "h_xxx": true }, "water": 2 }
-        }
+        },
+        "waterStreakResetBefore": "2026-06-30" (optional, same idea
+          for the water streak)
       }
   --------------------------------------------------------- */
 
@@ -614,7 +627,13 @@ footer {
   }
 
   function defaultDay() {
-    return { entries: {}, water: 0 };
+    /* entries/water are the live checkbox state, which Reset buttons
+       are allowed to clear. completed/completedWater are sticky
+       snapshots: once a routine (or water) is fully done on a given
+       day, that stays true for the rest of that day even if the
+       checkboxes are later cleared to redo them, so an in-day Reset
+       can never cost you that day's streak credit. */
+    return { entries: {}, water: 0, completed: {}, completedWater: false };
   }
 
   function allHabitIds() {
@@ -636,6 +655,8 @@ footer {
     dayData = store.days[todayKey];
     if (!dayData.entries) { dayData.entries = {}; }
     if (typeof dayData.water !== "number") { dayData.water = 0; }
+    if (!dayData.completed) { dayData.completed = {}; }
+    if (typeof dayData.completedWater !== "boolean") { dayData.completedWater = false; }
 
     /* backfill any missing habit entries for today */
     var ids = allHabitIds();
@@ -654,17 +675,29 @@ footer {
      today is skipped (rather than breaking the streak) since the day
      isn't over — the streak resumes counting from yesterday. Stops the
      first time it hits an incomplete or missing day. */
-  function computeStreak(isDayComplete) {
+  function computeStreak(isDayComplete, resetBeforeKey) {
     var streak = 0;
     var d = new Date();
+    var todayK = dateKeyFor(d);
 
-    if (!isDayComplete(dateKeyFor(d))) {
+    /* resetBeforeKey is an optional floor (a date key) set by the
+       "Reset Streak" button. The streak calculation refuses to count
+       anything on or before that date, without altering the actual
+       logged history. */
+    if (resetBeforeKey && todayK <= resetBeforeKey) {
+      return 0;
+    }
+
+    if (!isDayComplete(todayK)) {
       d.setDate(d.getDate() - 1);
     }
 
     var guard = 0; /* safety cap so a bug can't loop forever */
     while (guard < 3660) {
       var key = dateKeyFor(d);
+      if (resetBeforeKey && key <= resetBeforeKey) {
+        break;
+      }
       if (isDayComplete(key)) {
         streak++;
         d.setDate(d.getDate() - 1);
@@ -685,24 +718,48 @@ footer {
     }
     return computeStreak(function (key) {
       var day = store.days[key];
-      if (!day || !day.entries) { return false; }
-      var j;
+      if (!day) { return false; }
+      /* Sticky snapshot wins: if this routine was ever fully checked
+         off on this day, it counts — even if a later Reset cleared
+         the boxes to redo them. */
+      if (day.completed && day.completed[routine.id]) { return true; }
+      if (!day.entries) { return false; }
+      var j, sawAny = false;
       for (j = 0; j < habitIds.length; j++) {
+        /* If this habit didn't exist yet on this historical day (no
+           entry was ever recorded for it), don't let its absence
+           retroactively break a streak earned before the habit was
+           added. Only habits actually tracked that day count. */
+        if (typeof day.entries[habitIds[j]] === "undefined") { continue; }
+        sawAny = true;
         if (!day.entries[habitIds[j]]) { return false; }
       }
-      return true;
-    });
+      return sawAny;
+    }, routine.streakResetBefore);
   }
 
   function waterStreak() {
     return computeStreak(function (key) {
       var day = store.days[key];
       if (!day) { return false; }
+      if (day.completedWater) { return true; }
       return (typeof day.water === "number") && day.water >= 4;
-    });
+    }, store.waterStreakResetBefore);
   }
 
   /* -------- resets -------- */
+
+  /* Called after any habit toggle/delete. If every habit in the
+     routine is now checked for today, snapshot that permanently in
+     dayData.completed so a later Reset can't take the credit away. */
+  function markRoutineCompletionIfDone(routine) {
+    if (!routine.habits.length) { return; }
+    var i;
+    for (i = 0; i < routine.habits.length; i++) {
+      if (!dayData.entries[routine.habits[i].id]) { return; }
+    }
+    dayData.completed[routine.id] = true;
+  }
 
   function resetRoutineToday(routine) {
     var i;
@@ -748,6 +805,59 @@ footer {
     persistLocalStorage();
     renderAll();
     setStatus("Today's routines have been reset.", true);
+  }
+
+  /* -------- generic multi-tap confirmation (no window.confirm, since
+     some mobile webviews silently block/no-op it) --------
+
+     warnings: an array of button labels to show on each tap before
+     the final one. The action fires on the tap AFTER the last
+     warning is shown, so warnings.length + 1 total taps are needed
+     — e.g. 2 warnings = 3 taps = "three-step verification". */
+  function wireStepConfirmButton(btn, warnings, action, idleLabel, idleClassName, confirmingClassName) {
+    var step = 0;
+    var timer = null;
+
+    function idle() {
+      step = 0;
+      window.clearTimeout(timer);
+      btn.textContent = idleLabel;
+      btn.className = idleClassName;
+    }
+
+    btn.addEventListener("click", function (e) {
+      if (e) { e.stopPropagation(); }
+      window.clearTimeout(timer);
+      if (step < warnings.length) {
+        btn.textContent = warnings[step];
+        btn.className = confirmingClassName;
+        step++;
+        timer = window.setTimeout(idle, 6000);
+        return;
+      }
+      idle();
+      action();
+    }, false);
+
+    idle();
+  }
+
+  /* -------- live day rollover --------
+
+     todayKey / dayData are normally set once at load. If the tab is
+     left open across midnight, this catches the date change without
+     needing a reload: run once on load, then on an interval, then
+     again whenever the tab becomes visible (covers phones locking
+     overnight and being reopened the next morning). */
+  function checkDayRollover() {
+    var freshKey = getTodayKey();
+    if (freshKey !== todayKey) {
+      todayKey = freshKey;
+      var label = document.getElementById("todayLabel");
+      if (label) { label.textContent = getTodayLabel(); }
+      ensureToday();
+      renderAll();
+    }
   }
 
   /* -------- migration from the old flat single-routine format -------- */
@@ -958,31 +1068,60 @@ footer {
       actions.className = "header-actions";
 
       var resetRoutineBtn = document.createElement("div");
-      resetRoutineBtn.className = "icon-btn reset-btn";
-      resetRoutineBtn.textContent = "\u21BA";
+      resetRoutineBtn.className = "btn small";
       resetRoutineBtn.title = "Reset today's checkmarks for this routine";
-      resetRoutineBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var ok = window.confirm("Reset today's checkmarks in \"" + routine.name + "\"?");
-        if (!ok) { return; }
-        resetRoutineToday(routine);
-      }, false);
+      wireStepConfirmButton(
+        resetRoutineBtn,
+        ["Sure? Tap again"],
+        function () {
+          resetRoutineToday(routine);
+          setStatus("Today's checkmarks reset for \"" + routine.name + "\".", true);
+        },
+        "\u21BA Reset",
+        "btn small",
+        "btn small gold"
+      );
 
-      var delRoutineBtn = document.createElement("div");
-      delRoutineBtn.className = "icon-btn";
-      delRoutineBtn.textContent = "\u2715";
-      delRoutineBtn.addEventListener("click", function () {
-        var ok = window.confirm("Delete the whole \"" + routine.name + "\" routine?");
-        if (!ok) { return; }
-        var idx = store.routines.indexOf(routine);
-        if (idx > -1) {
-          store.routines.splice(idx, 1);
+      var resetStreakBtn = document.createElement("div");
+      resetStreakBtn.className = "btn small";
+      resetStreakBtn.title = "Reset only this routine's streak count (keeps today's checkmarks and full history)";
+      wireStepConfirmButton(
+        resetStreakBtn,
+        ["Sure? Tap again", "Tap once more to reset"],
+        function () {
+          routine.streakResetBefore = getTodayKey();
           persistLocalStorage();
           renderAll();
-        }
-      }, false);
+          setStatus("Streak for \"" + routine.name + "\" reset.", true);
+        },
+        "Reset Streak",
+        "btn small",
+        "btn small gold"
+      );
+
+      var delRoutineBtn = document.createElement("div");
+      delRoutineBtn.className = "btn small";
+      delRoutineBtn.title = "Delete the whole routine";
+      wireStepConfirmButton(
+        delRoutineBtn,
+        ["Delete? Tap again", "Tap once more to delete"],
+        function () {
+          var idx = store.routines.indexOf(routine);
+          if (idx > -1) {
+            var deletedName = routine.name;
+            store.routines.splice(idx, 1);
+            persistLocalStorage();
+            renderAll();
+            setStatus("\"" + deletedName + "\" deleted.", true);
+          }
+        },
+        "\u2715 Delete",
+        "btn small",
+        "btn small gold"
+      );
 
       actions.appendChild(resetRoutineBtn);
+      actions.appendChild(resetStreakBtn);
       actions.appendChild(delRoutineBtn);
 
       headerRow.appendChild(h2);
@@ -1115,6 +1254,7 @@ footer {
         var idx = routine.habits.indexOf(habit);
         if (idx > -1) {
           routine.habits.splice(idx, 1);
+          markRoutineCompletionIfDone(routine);
           persistLocalStorage();
           renderAll();
         }
@@ -1126,6 +1266,7 @@ footer {
 
       li.addEventListener("click", function () {
         dayData.entries[habit.id] = !dayData.entries[habit.id];
+        markRoutineCompletionIfDone(routine);
         persistLocalStorage();
         renderAll();
       }, false);
@@ -1156,6 +1297,7 @@ footer {
           } else {
             dayData.water = index + 1;
           }
+          if (dayData.water >= 4) { dayData.completedWater = true; }
           persistLocalStorage();
           renderAll();
         }, false);
@@ -1310,6 +1452,29 @@ footer {
     document.getElementById("btnApplyJson").addEventListener("click", function () {
       var ta = document.getElementById("jsonText");
       applyIncomingJson(ta.value);
+    }, false);
+
+    wireStepConfirmButton(
+      document.getElementById("btnResetWaterStreak"),
+      ["Sure? Tap again", "Tap once more to reset"],
+      function () {
+        store.waterStreakResetBefore = getTodayKey();
+        persistLocalStorage();
+        renderAll();
+        setStatus("Water streak reset.", true);
+      },
+      "Reset Streak",
+      "btn small",
+      "btn small gold"
+    );
+
+    /* Catch the date changing while the tab stays open: check now,
+       then every 60s, then again whenever the tab regains focus
+       (covers a phone screen locking overnight). */
+    checkDayRollover();
+    window.setInterval(checkDayRollover, 60000);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) { checkDayRollover(); }
     }, false);
   }
 
